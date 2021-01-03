@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+  <ul id="chatlog"></ul>
+  <input type="text" id="chattext"><br>
+  <input type="submit" value="Send" id="chatsend">
+  {{ room_name|json_script:'room-name' }}
+  {{ user_name|json_script:'user-name' }}
+  {{ anon|json_script:'is-anon' }}
+  <script src="{% static 'chat/room.js' %}"></script>
+{% endblock %}
