@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'channels',
     'chat',
     'user',
+    'post',
 ]
 
 MIDDLEWARE = [
@@ -141,3 +142,5 @@ LOGIN_URL = reverse_lazy('login')
 LOGIN_REDIRECT_URL = reverse_lazy('home')
 
 LOGOUT_REDIRECT_URL = reverse_lazy('home')
+
+AUTH_USER_MODEL = 'user.User'

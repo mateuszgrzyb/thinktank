@@ -1,5 +1,4 @@
 import json
-from abc import abstractmethod
 
 from channels.generic.websocket import AsyncWebsocketConsumer
 
@@ -11,7 +10,6 @@ class AbstractChatConsumer(AsyncWebsocketConsumer):
 
     history = {}
 
-    @abstractmethod
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = f"chat_{self.room_name}"
@@ -44,20 +42,17 @@ class AbstractChatConsumer(AsyncWebsocketConsumer):
         msg = {k: event[k] for k in event if k != 'type'}
         self.history[self.room_name].append(msg)
         await self.send(text_data=json.dumps(msg))
-        print(self.history)
 
 
-def decorator(anonymous: bool):
+def historydecorator(anonymous: bool):
     def wrapped(clazz: type):
-        class DerivedChatConsumer(clazz):
-            history = {room.url: [] for room in rooms().filter(anonymous=anonymous)}
-
-        return DerivedChatConsumer
+        clazz.history = {room.url: [] for room in rooms().filter(anonymous=anonymous)}
+        return clazz
 
     return wrapped
 
 
-@decorator(anonymous=False)
+@historydecorator(anonymous=False)
 class ChatConsumer(AbstractChatConsumer):
 
     async def connect(self):
@@ -67,8 +62,8 @@ class ChatConsumer(AbstractChatConsumer):
             await super().connect()
 
 
-@decorator(anonymous=True)
+@historydecorator(anonymous=True)
 class AnonChatConsumer(AbstractChatConsumer):
+    pass
 
-    async def connect(self):
-        await super().connect()
+

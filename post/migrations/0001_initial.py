@@ -12,16 +12,11 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Room',
+            name='Post',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('url', models.TextField()),
-                ('name', models.TextField()),
-                ('anonymous', models.BooleanField(default=False)),
+                ('content', models.TextField(max_length=120)),
+                ('likes', models.IntegerField(default=0)),
             ],
-        ),
-        migrations.AddConstraint(
-            model_name='room',
-            constraint=models.UniqueConstraint(fields=('id', 'anonymous'), name='composite primary key'),
         ),
     ]
