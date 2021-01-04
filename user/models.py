@@ -6,3 +6,7 @@ from django.db import models
 
 class User(AbstractUser):
     pass
+
+
+def users():
+    return User.objects
