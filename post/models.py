@@ -3,35 +3,24 @@ from django.db import models
 # Create your models here.
 from django.urls import reverse
 
-from user.models import User
-
 
 class Post(models.Model):
-
     content = models.TextField(
         null=False,
         blank=False,
         max_length=120
     )
 
-    likes = models.IntegerField(
-        null=False,
-        blank=False,
-        default=0
+    likes = models.ManyToManyField(
+        to='user.User',
+        blank=True,
+        related_name='posts_liked_by_user'
     )
 
     author = models.ForeignKey(
-        to=User,
+        to='user.User',
         on_delete=models.CASCADE
     )
-
-    class Meta:
-        constraints = [
-            models.CheckConstraint(
-                check=models.Q(likes__gte='0'),
-                name='likes_non_negative'
-            )
-        ]
 
     def get_absolute_url(self):
         return reverse('view_post', args=[self.pk])
@@ -41,5 +30,8 @@ class Post(models.Model):
         new_content = self.content[:max_len]
         if len(self.content) > len(new_content):
             new_content += '...'
-        return f'{self.author}: "{new_content}" ({self.likes})'
+        return f'{self.author}: "{new_content}" ({self.likes.count()})'
 
+
+def posts():
+    return Post.objects

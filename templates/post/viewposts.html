@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+  <script
+    id="like_post_url"
+    type="application/json"
+  >{% url 'post:like_post' %}</script>
+
+  {% csrf_token %}
+
+  {% for post in object_list %}
+    <div id="post_{{ post.pk }}">
+      <p>author: {{ post.author }}</p>
+      <p>content: {{ post.content }}</p>
+      <span>
+        <button id="button_{{ post.pk }}">
+        </button>
+        {% if post.author == user %}
+          <form action="{% url 'post:update_post' pk=post.pk %}">
+          <button type="submit">
+            edit
+          </button>
+        </form>
+        {% endif %}
+      </span>
+      <br>
+    </div>
+  {% endfor %}
+  <script src="{% static 'post/viewposts.js' %}"></script>
+{% endblock %}

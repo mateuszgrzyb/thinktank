@@ -3,7 +3,7 @@
 {% block content %}
 
   What chat room would you like to enter, {{ username }}?<br>
-  <form action="{% url 'home' %}" method="post">
+  <form action="{% url 'chat:home' %}" method="post">
     {% csrf_token %}
     <select name="room">
       {% for room in rooms %}

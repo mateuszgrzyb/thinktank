@@ -20,9 +20,9 @@ class HomeView(View):
 
     def post(self, request: HttpRequest) -> HttpResponse:
         if (data := request.POST['room'].split(':'))[0] == 'True':
-            return redirect('anon', room=data[1])
+            return redirect('chat:anon', room=data[1])
         elif data[0] == 'False':
-            return redirect('room', room=data[1])
+            return redirect('chat:room', room=data[1])
         else:
             raise Exception("bruh what the fuck?")
 

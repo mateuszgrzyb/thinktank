@@ -1,0 +1,41 @@
+<ul id="navbar">
+  <li>
+    <a href="{% url 'chat:home' %}">
+      Chat
+    </a>
+  </li>
+  <li>
+    <a href="{% url 'post:view_posts' %}">
+      Posts
+    </a>
+  </li>
+  {% if user.is_anonymous %}
+    <li>
+      Hey anon!
+    </li>
+    <li>
+      <a href="{% url 'user:login' %}">
+        Login
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'user:register' %}">
+        Register
+      </a>
+    </li>
+  {% else %}
+    <li>
+      Hey {{ user.username }}!
+    </li>
+    <li>
+      <a href="{% url 'user:logout' %}">
+        Logout
+      </a>
+    </li>
+    <li>
+      <a href="{% url 'user:change_password' %}">
+        Change Password
+      </a>
+    </li>
+  {% endif %}
+</ul>

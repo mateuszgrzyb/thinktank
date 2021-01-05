@@ -1,14 +1,20 @@
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.http import JsonResponse, HttpResponse
-from django.shortcuts import render
+import json
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
+from django.http import HttpRequest
+from django.http import JsonResponse
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, UpdateView, DeleteView
-from django.views.generic.detail import SingleObjectTemplateResponseMixin, SingleObjectMixin
-from django.views.generic.edit import BaseFormView
+from django.views import View
+from django.views.generic import CreateView
+from django.views.generic import DeleteView
+from django.views.generic import ListView
+from django.views.generic import UpdateView
 
+from post.mixins import UserIsOwnerMixin
 from post.models import Post
+from post.models import posts
+from user.models import User
 
 
 class CreatePost(LoginRequiredMixin, CreateView):
@@ -18,27 +24,11 @@ class CreatePost(LoginRequiredMixin, CreateView):
     ]
 
     template_name = 'post/createpost.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('post:view_posts')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
-
-
-class UserIsOwnerMixin(
-    LoginRequiredMixin,
-    UserPassesTestMixin,
-    SingleObjectMixin
-):
-    def test_func(self):
-        author = self.get_object().author
-        user = self.request.user
-        return author.pk == user.pk
-
-    # def handle_no_permission(self):
-    #     return HttpResponse(
-    #         'You are not the owner of this content'
-    #     )
 
 
 class UpdatePost(UserIsOwnerMixin, UpdateView):
@@ -47,9 +37,50 @@ class UpdatePost(UserIsOwnerMixin, UpdateView):
         'content'
     ]
     template_name = 'post/updatepost.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('post:view_posts')
 
 
 class DeletePost(UserIsOwnerMixin, DeleteView):
     model = Post
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('post:view_posts')
+
+
+class ViewPosts(ListView):
+    model = Post
+    paginate_by = 10
+    template_name = 'post/viewposts.html'
+
+
+def okay_response(user: User, pk: int):
+    likes = posts().get(pk=pk).likes
+    no_of_likes = likes.count()
+    user = likes.filter(pk=user.pk).exists()
+
+    return JsonResponse({
+        'response': 'okay',
+        'likes': no_of_likes,
+        'user': user
+    })
+
+class LikePost(View):
+
+    def post(self, request: HttpRequest) -> JsonResponse:
+        user: User = request.user
+
+        data = json.loads(request.body)
+        pk = data['like']
+
+        if data['type'] == 'fetch':
+
+            return okay_response(user, pk)
+
+        elif data['type'] == 'update':
+            if user.is_anonymous:
+                return JsonResponse({'response': 'error'})
+            else:
+                user.click_like(pk)
+
+            return okay_response(user, pk)
+
+        else:
+            raise Exception("Bad ajax request type")

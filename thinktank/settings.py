@@ -138,9 +138,9 @@ CHANNEL_LAYERS = {
     }
 }
 
-LOGIN_URL = reverse_lazy('login')
-LOGIN_REDIRECT_URL = reverse_lazy('home')
+LOGIN_URL = reverse_lazy('user:login')
+LOGIN_REDIRECT_URL = reverse_lazy('post:view_posts')
 
-LOGOUT_REDIRECT_URL = reverse_lazy('home')
+LOGOUT_REDIRECT_URL = reverse_lazy('post:view_posts')
 
 AUTH_USER_MODEL = 'user.User'

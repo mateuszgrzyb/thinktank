@@ -6,9 +6,6 @@
 
     <title>
       ThinkTank
-      {% if title %}
-        Chat - {{ title }}
-      {% endif %}
     </title>
 
     {% load static %}
@@ -16,9 +13,16 @@
       type="application/javascript"
       src="{% static 'script.js' %}"
     ></script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'style.css' %}"
+    >
 
   </head>
   <body>
+
+    {% include 'navbar.html' %}
 
     {% block content %}
     {% endblock %}

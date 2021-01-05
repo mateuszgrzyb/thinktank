@@ -7,7 +7,6 @@ from chat.models import rooms
 
 # noinspection PyAttributeOutsideInit
 class AbstractChatConsumer(AsyncWebsocketConsumer):
-
     history = {}
 
     async def connect(self):
@@ -65,5 +64,3 @@ class ChatConsumer(AbstractChatConsumer):
 @historydecorator(anonymous=True)
 class AnonChatConsumer(AbstractChatConsumer):
     pass
-
-

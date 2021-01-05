@@ -21,6 +21,31 @@ class LoginView(BaseLoginView):
     template_name = 'user/login.html'
 
 
+class RegisterView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return render(
+            request,
+            template_name='user/register.html',
+            context={
+                'form': RegistrationForm()
+            }
+        )
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        form = RegistrationForm(request.POST)
+        if not form.is_valid():
+            return self.get(request)
+
+        user = users().create_user(
+            username=form.cleaned_data['username'],
+            email=form.cleaned_data['email'],
+            password=form.cleaned_data['password1'],
+        )
+
+        login(request, user)
+        return redirect('post:view_posts')
+
+
 def register_view(request: HttpRequest) -> HttpResponse:
     form = RegistrationForm(request.POST or None)
     if request.method == 'POST' and form.is_valid():
@@ -30,7 +55,7 @@ def register_view(request: HttpRequest) -> HttpResponse:
             password=form.cleaned_data['password1'],
         )
         login(request, user)
-        return redirect('home')
+        return redirect('post:view_posts')
 
     return render(
         request,
@@ -43,4 +68,4 @@ def register_view(request: HttpRequest) -> HttpResponse:
 
 class PasswordChangeView(LoginRequiredMixin, BasePasswordChangeView):
     template_name = 'user/change_password.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('post:view_posts')
