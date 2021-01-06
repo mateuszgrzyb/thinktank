@@ -1,31 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
+{% extends 'base_no_navbar.html' %}
 
-    <meta charset="UTF-8">
+{% block content_no_navbar %}
 
-    <title>
-      ThinkTank
-    </title>
+  {% include 'navbar.html' %}
 
-    {% load static %}
-    <script
-      type="application/javascript"
-      src="{% static 'script.js' %}"
-    ></script>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{% static 'style.css' %}"
-    >
+  <p style="padding-bottom: 100px"></p>
 
-  </head>
-  <body>
+  {% block content %}
+  {% endblock %}
 
-    {% include 'navbar.html' %}
-
-    {% block content %}
-    {% endblock %}
-
-  </body>
-</html>
+{% endblock %}

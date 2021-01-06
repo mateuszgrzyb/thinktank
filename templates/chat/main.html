@@ -1,0 +1,53 @@
+
+{% extends 'base.html' %}
+{% block content %}
+
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h4 class="w-100 text-center">For Everyone</h4>
+      </div>
+      <div class="col">
+        <h4 class="w-100 text-center">For Verified Only</h4>
+      </div>
+    </div>
+    {% for room in rooms %}
+      <div class="row p-1">
+        <div class="col">
+          {% with room.anonchatroom as ac  %}
+            {% if ac %}
+              <a
+                class="btn btn-primary w-100"
+                href="{% url 'chat:anon' room=ac.url %}"
+              >{{ ac.name }}</a>
+            {% endif %}
+          {% endwith %}
+        </div>
+        <div class="col">
+          {% with room.chatroom as c %}
+            {% if c %}
+              <a
+                class="btn btn-primary w-100"
+                href="{% url 'chat:room' room=c.url %}"
+              >{{ c.name }}</a>
+            {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% comment %}
+  <form action="{% url 'chat:home' %}" method="post">
+    {% csrf_token %}
+    <select name="room">
+      {% for room in rooms %}
+        <option value='{{ room.anonymous }}:{{ room.url }}'>{{ room.name }}</option>
+      {% endfor %}
+    </select>
+    <input type="submit" value="Enter">
+  </form>
+  {% endcomment %}
+
+{% endblock %}
+

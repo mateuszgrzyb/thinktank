@@ -1,41 +1,43 @@
-<ul id="navbar">
-  <li>
-    <a href="{% url 'chat:home' %}">
-      Chat
-    </a>
-  </li>
-  <li>
-    <a href="{% url 'post:view_posts' %}">
-      Posts
-    </a>
-  </li>
-  {% if user.is_anonymous %}
-    <li>
-      Hey anon!
+<nav class="navbar navbar-expand-sm fixed-top" style="background-color: #e2e2e2">
+  <ul class="navbar-nav mr-auto">
+
+    <li class="nav-item">
+      <a class="navbar-brand" href="#">ThinkTank</a>
     </li>
-    <li>
-      <a href="{% url 'user:login' %}">
-        Login
+
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'chat:home' %}"> Chat </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'post:view_posts' %}"> Posts </a>
+    </li>
+  </ul>
+  <ul class="navbar-nav ml-auto">
+    <li class="nav-item dropdown">
+    {% if user.is_anonymous %}
+
+      <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+        Hey anon!
       </a>
+
+      <div class="dropdown-menu dropdown-menu-right">
+        <a class="dropdown-item" href="{% url 'user:login' %}"> Login </a>
+        <a class="dropdown-item" href="{% url 'user:register' %}"> Register </a>
+      </div>
+    {% else %}
+
+        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+          Hey {{ user.username }}!
+        </a>
+
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="{% url 'post:create_post' %}"> Create New Post</a>
+          <a class="dropdown-item" href="{% url 'user:change_password' %}"> Change Password </a>
+          <a class="dropdown-item" href="{% url 'user:logout' %}"> Logout </a>
+        </div>
+      {% endif %}
     </li>
-    <li>
-      <a href="{% url 'user:register' %}">
-        Register
-      </a>
-    </li>
-  {% else %}
-    <li>
-      Hey {{ user.username }}!
-    </li>
-    <li>
-      <a href="{% url 'user:logout' %}">
-        Logout
-      </a>
-    </li>
-    <li>
-      <a href="{% url 'user:change_password' %}">
-        Change Password
-      </a>
-    </li>
-  {% endif %}
-</ul>
+
+  </ul>
+</nav>

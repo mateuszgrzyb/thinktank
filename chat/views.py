@@ -1,3 +1,5 @@
+from itertools import zip_longest
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse, HttpRequest, Http404
 from django.shortcuts import render, redirect
@@ -9,22 +11,35 @@ from chat.models import rooms
 class HomeView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
 
-        username = 'anon' if (u := request.user).is_anonymous else u.username
+        acs = rooms().filter(anonymous=True)
+        cs = rooms().filter(anonymous=False)
+        print(acs)
+        print(cs)
+
+        dictedrooms = [
+            {
+                'chatroom': c,
+                'anonchatroom': ac,
+            }
+            for c, ac in zip_longest(cs, acs)
+        ]
+
+        for room in dictedrooms:
+            print(f"{room['chatroom']} {room['anonchatroom']}")
 
         context = {
-            'rooms': rooms().all(),
-            'username': username,
+            'rooms': dictedrooms
         }
 
-        return render(request, 'main.html', context=context)
+        return render(request, 'chat/main.html', context=context)
 
-    def post(self, request: HttpRequest) -> HttpResponse:
-        if (data := request.POST['room'].split(':'))[0] == 'True':
-            return redirect('chat:anon', room=data[1])
-        elif data[0] == 'False':
-            return redirect('chat:room', room=data[1])
-        else:
-            raise Exception("bruh what the fuck?")
+    # def post(self, request: HttpRequest) -> HttpResponse:
+    #     if (data := request.POST['room'].split(':'))[0] == 'True':
+    #         return redirect('chat:anon', room=data[1])
+    #     elif data[0] == 'False':
+    #         return redirect('chat:room', room=data[1])
+    #     else:
+    #         raise Exception("bruh what the fuck?")
 
 
 def abstractroomview(anon: bool):

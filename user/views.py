@@ -8,8 +8,10 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView
+from django.views.generic import DetailView
 
 from user.forms import RegistrationForm
+from user.models import User
 from user.models import users
 
 
@@ -69,3 +71,8 @@ def register_view(request: HttpRequest) -> HttpResponse:
 class PasswordChangeView(LoginRequiredMixin, BasePasswordChangeView):
     template_name = 'user/change_password.html'
     success_url = reverse_lazy('post:view_posts')
+
+
+class ShowUserView(DetailView):
+    model = User
+    template_name = 'user/show_user.html'

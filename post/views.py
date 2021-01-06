@@ -47,32 +47,31 @@ class DeletePost(UserIsOwnerMixin, DeleteView):
 
 class ViewPosts(ListView):
     model = Post
-    paginate_by = 10
+    paginate_by = 3
     template_name = 'post/viewposts.html'
 
-
-def okay_response(user: User, pk: int):
-    likes = posts().get(pk=pk).likes
-    no_of_likes = likes.count()
-    user = likes.filter(pk=user.pk).exists()
-
-    return JsonResponse({
-        'response': 'okay',
-        'likes': no_of_likes,
-        'user': user
-    })
 
 class LikePost(View):
 
     def post(self, request: HttpRequest) -> JsonResponse:
-        user: User = request.user
 
+        user: User = request.user
         data = json.loads(request.body)
         pk = data['like']
 
+        def okay_response():
+
+            likes = posts().get(pk=pk).likes
+
+            return JsonResponse({
+                'response': 'okay',
+                'likes': likes.count(),
+                'user': likes.filter(pk=user.pk).exists()
+            })
+
         if data['type'] == 'fetch':
 
-            return okay_response(user, pk)
+            return okay_response()
 
         elif data['type'] == 'update':
             if user.is_anonymous:
@@ -80,7 +79,7 @@ class LikePost(View):
             else:
                 user.click_like(pk)
 
-            return okay_response(user, pk)
+            return okay_response()
 
         else:
             raise Exception("Bad ajax request type")
