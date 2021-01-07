@@ -14,6 +14,7 @@ from django.views.generic import UpdateView
 from post.mixins import UserIsOwnerMixin
 from post.models import Post
 from post.models import posts
+from thinktank.helpers import AjaxView
 from user.models import User
 
 
@@ -52,17 +53,34 @@ class ViewPosts(ListView):
     ordering = '-pk'
 
 
-class LikePost(View):
+class LikeView(AjaxView):
+
+    def update_db(self, user: User, pk: int):
+        user.click_like(pk)
+
+    def okay_response(self, user: User, pk: int, **kwargs):
+        likes = posts().get(pk=pk).likes
+        return super().okay_response(
+            user,
+            pk,
+            likes=likes.count(),
+            liked=likes.filter(pk=user.pk).exists(),
+            **kwargs
+        )
+
+
+class OldLikeView(View):
 
     def post(self, request: HttpRequest) -> JsonResponse:
 
         user: User = request.user
         data = json.loads(request.body)
-        pk = data['like']
+        pk = data['pk']
 
         def okay_response():
 
             likes = posts().get(pk=pk).likes
+            print(likes.count())
 
             return JsonResponse({
                 'response': 'okay',

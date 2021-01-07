@@ -1,41 +1,27 @@
 
 const url = document.getElementById('like_post_url').textContent
-const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
-const request = new Request(
-  url,
-  {headers: {'X-CSRFToken': csrftoken}},
-)
 
-function ajax(data, button) {
+const likeajax = new FetchUpdateAjax(url)
 
-
-  fetch(request, {
-    method: 'POST',
-    body: JSON.stringify(data),
-    mode: 'same-origin'
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log(data)
-      if (data.response === "okay") {
-        console.log(data.likes)
-        console.log(data.user)
-        button.innerHTML =
-          `${(data.user) ? 'LIKED!' : 'Like'}  ${data.likes}`
-      }
-    })
+function buttonupdate(data, button) {
+  if (data.response === "okay") {
+    button.innerHTML =
+      `${(data.liked) ? 'LIKED!' : 'Like'}  ${data.likes}`
+  }
 }
+
+
 
 document
   .querySelectorAll("[id*='button']")
   .forEach(function (button)  {
-    const id = button.id.split('_')[1]
-    console.log(id)
-    ajax({type: 'fetch', like: id}, button)
-    console.log('okay')
 
-    button.onclick = event => {
-      ajax({type: 'update', like: id}, button)
+    const id = button.id.split('_')[1]
+
+    likeajax.fetch(id, data => buttonupdate(data, button))
+
+    button.onclick = (event) => {
+      likeajax.update(id, data => buttonupdate(data, button))
     }
   })
 

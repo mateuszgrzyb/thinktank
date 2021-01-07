@@ -1,3 +1,4 @@
+import json
 from abc import abstractmethod
 
 from django.contrib.auth import login
@@ -7,6 +8,7 @@ from django.contrib.auth.views import PasswordChangeView as BasePasswordChangeVi
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.http import Http404
 from django.http import HttpRequest, HttpResponse
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views import View
@@ -14,6 +16,7 @@ from django.views.generic import CreateView, UpdateView
 from django.views.generic import DetailView
 from django.views.generic import ListView
 
+from thinktank.helpers import AjaxView
 from user.forms import RegistrationForm
 from user.models import User
 from user.models import users
@@ -79,6 +82,7 @@ class PasswordChangeView(LoginRequiredMixin, BasePasswordChangeView):
 
 class ShowUserView(DetailView):
     model = User
+    context_object_name = 'profile'
     template_name = 'user/userdetail.html'
 
 
@@ -116,3 +120,28 @@ class FollowingView(UserListView):
         context_data = super().get_context_data(object_list=object_list, **kwargs)
         info = {'info': f'{self.get_user().username.capitalize()} is following'}
         return context_data | info
+
+
+class FollowUserView(AjaxView):
+
+    def okay_response(self, user: User, pk: int, **kwargs):
+        return super().okay_response(
+            user,
+            pk,
+            following=user.following.filter(pk=pk).exists(),
+            **kwargs
+        )
+
+    def update_db(self, user: User, pk: int):
+        user.click_follow(pk)
+
+
+class FollowNumbersView(View):
+    def post(self, request: HttpRequest) -> JsonResponse:
+        user = request.user
+        data = json.loads(request.body)
+        pk = data['pk']
+
+        return JsonResponse({})
+
+

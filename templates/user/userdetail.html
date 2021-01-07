@@ -1,15 +1,21 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 
+  {% csrf_token %}
+
+  <script id="follow_user_url" type="application/json">{% url 'user:follow_user' %}</script>
+  <script id="follow_user_pk" type="application/json">{{ profile.pk }}</script>
+  <script id="user_followers_url" type="application/json">{% url 'user:followers' pk=profile.pk %}</script>
 
   <div class="container-sm card">
     <div class="card-body">
-      <h5 class="card-title">@{{ user.username }}</h5>
-      <p class="card-text">{{ user.bio }}</p>
+      <h5 class="card-title">@{{ profile.username }}</h5>
+      <p class="card-text">{{ profile.bio }}</p>
 
-      {% with user.following.count as c %}
+      {% with profile.following.count as c %}
         {% if c > 0 %}
-          <a href="{% url 'user:following' pk=user.pk %}">
+          <a href="{% url 'user:following' pk=profile.pk %}">
         {% else %}
           <a href="#">
         {% endif %}
@@ -17,16 +23,20 @@
           </a>
       {% endwith %}
 
-      {% with user.followers.count as c %}
+      {% with profile.followers.count as c %}
         {% if c > 0 %}
-          <a href="{% url 'user:followers' pk=user.pk %}">
+          <a id='followers_link' href="{% url 'user:followers' pk=profile.pk %}">
         {% else %}
-          <a href="#">
+          <a id="followers_link" href="#">
         {% endif %}
-            Followers: {{ c }}
+            Followers: <span id="followers_count">{{ c }}</span>
           </a>
       {% endwith %}
+      {% if user.is_authenticated and profile.pk != user.pk %}
+        <button id="follow" class="btn btn-sm btn-primary"></button>
+      {% endif %}
 
     </div>
   </div>
+  <script src="{% static 'user/userdetail.js' %}"></script>
 {% endblock %}
