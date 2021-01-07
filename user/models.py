@@ -1,17 +1,26 @@
+from importlib._common import _
+
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
 from django.db import models
 
 # Create your models here.
+
 from post.models import Post
-from post.models import posts
 
 
 class User(AbstractUser):
-
     bio = models.TextField(
         max_length=200,
         null=False,
-        default='This guy likes being soo mysterious...',
+        blank=True,
+    )
+
+    following = models.ManyToManyField(
+        'User',
+        blank=True,
+        symmetrical=False,
+        related_name='followers',
     )
 
     def click_like(self, post_pk: int):

@@ -1,31 +1,31 @@
 {% extends 'base_no_navbar.html' %}
 {% block content_no_navbar %}
 
-  <div class="jumbotron" style="background-color: white; min-height: 90vh; display: flex; align-items: center">
-    <div class="container p-5 w-50" style="background-color: #e2e2e2; border-radius: 10px">
+  <div class="jumbotron myoutsidebox">
+    <div class="container p-5 w-50 mybox" >
       <form method="post">
         {% csrf_token %}
         <div class="form-group">
           <h3 class="text-center">Register</h3>
         </div>
         <div class="form-group">
-          <input type="text" name="{{ form.username.name }}" class="form-control" id="input_username" placeholder="Username">
+          <input type="text" name="{{ form.username.name }}" class="form-control input-group-text" id="input_username" placeholder="Username">
         </div>
         <div class="form-group">
-          <input type="email" name="{{ form.email.name }}" class="form-control" id="input_email" placeholder="Email">
+          <input type="email" name="{{ form.email.name }}" class="form-control input-group-text" id="input_email" placeholder="Email">
         </div>
         <div class="form-group">
-          <input type="password" name="{{ form.password1.name }}" class="form-control" id="input_password1" placeholder="Password">
+          <input type="password" name="{{ form.password1.name }}" class="form-control input-group-text" id="input_password1" placeholder="Password">
         </div>
         <div class="form-group">
-          <input type="password" name="{{ form.password2.name }}" class="form-control" id="input_password2" placeholder="Repeat Password">
+          <input type="password" name="{{ form.password2.name }}" class="form-control input-group-text" id="input_password2" placeholder="Repeat Password">
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary w-100">Submit</button>
+          <button type="submit" class="btn btn-secondary w-100">Submit</button>
         </div>
       </form>
       <form action="{% url 'user:login' %}" id="login">
-        <button id='input_login' type="submit" class="btn btn-primary w-100" form="login">Already have an account? Login</button>
+        <button id='input_login' type="submit" class="btn btn-secondary w-100" form="login">Already have an account? Login</button>
       </form>
     </div>
   </div>

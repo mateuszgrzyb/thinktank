@@ -1,2 +1,12 @@
 
+.myoutsidebox {
+    background-color: white;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+}
 
+.mybox {
+    background-color: #e2e2e2;
+    border-radius: 10px;
+}

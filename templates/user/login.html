@@ -1,25 +1,25 @@
 {% extends 'base_no_navbar.html' %}
 {% block content_no_navbar %}
 
-  <div class="jumbotron" style="background-color: white; min-height: 90vh; display: flex; align-items: center">
-    <div class="container p-5 w-50" style="background-color: #e2e2e2; border-radius: 10px">
+  <div class="jumbotron myoutsidebox">
+    <div class="container p-5 w-50 mybox">
       <form method="post">
         {% csrf_token %}
         <div class="form-group">
           <h3 class="text-center">Login</h3>
         </div>
         <div class="form-group">
-          <input type="text" name="{{ form.username.name }}" class="form-control" id="input_username" placeholder="Username">
+          <input type="text" name="{{ form.username.name }}" class="form-control input-group-text" id="input_username" placeholder="Username">
         </div>
         <div class="form-group">
-          <input type="password" name="{{ form.password.name }}" class="form-control" id="input_password" placeholder="Password">
+          <input type="password" name="{{ form.password.name }}" class="form-control input-group-text" id="input_password" placeholder="Password">
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-primary w-100">Enter</button>
+          <button type="submit" class="btn btn-secondary w-100">Enter</button>
         </div>
       </form>
       <form action="{% url 'user:register' %}" id="register">
-        <button id='input_register' type="submit" class="btn btn-primary w-100" form="register">Don't have an account? Register</button>
+        <button id='input_register' type="submit" class="btn btn-secondary w-100" form="register">Don't have an account? Register</button>
       </form>
     </div>
   </div>

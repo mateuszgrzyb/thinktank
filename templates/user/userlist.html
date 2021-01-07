@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <h4 class="text-center mb-5 font-weight-bold">
+    {{ info }}
+  </h4>
+
+  {% for user in users %}
+    <div class="container-sm card mb-5">
+      <div class="card-body">
+        <div class="w-100">
+          <a href="{% url 'user:show_user' pk=user.pk %}">@{{ user.username }}</a>
+          <span class="mr-auto">
+            followers: {{ user.followers.count }}
+            following: {{ user.following.count }}
+          </span>
+        </div>
+        {% comment %}
+        <h5 class="card-title">@{{ user.username }}</h5>
+        <p class="card-text">{{ user.bio }}</p>
+
+        {% with user.following.count as c %}
+          {% if c > 0 %}
+            <a href="{% url 'user:following' pk=user.pk %}">
+          {% else %}
+            <a href="#">
+          {% endif %}
+        Following: {{ c }}
+        </a>
+        {% endwith %}
+
+        {% with user.followers.count as c %}
+          {% if c > 0 %}
+            <a href="{% url 'user:followers' pk=user.pk %}">
+          {% else %}
+            <a href="#">
+          {% endif %}
+        Followers: {{ c }}
+        </a>
+        {% endwith %}
+        {% endcomment %}
+
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}

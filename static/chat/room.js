@@ -14,8 +14,9 @@ const s = new WebSocket(
 
 s.onmessage = event => {
   const data = JSON.parse(event.data)
-  chatlog.innerHTML +=
-    `<li>${data.from}: ${data.msg}</li>`
+  chatlog.value +=
+    `\n${data.from}: ${data.msg}`
+  chatlog.scrollTop = chatlog.scrollHeight
 }
 
 function sendmsg() {

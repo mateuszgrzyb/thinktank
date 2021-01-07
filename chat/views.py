@@ -68,6 +68,8 @@ class AnonRoomView(abstractroomview(anon=True)):
 
     def username(self, request: HttpRequest):
         if request.user.is_anonymous:
+            print('AAA')
+            AnonRoomView.ANID += 1
             return f'anon#{str(self.ANID).zfill(4)}'
         else:
             return super().username(request)

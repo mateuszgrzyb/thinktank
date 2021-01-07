@@ -1,9 +1,21 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-  <ul id="chatlog"></ul>
-  <input type="text" id="chattext"><br>
-  <input type="submit" value="Send" id="chatsend">
+  <div class="" style="align-items: center">
+    <div class="container p-5 w-75 mybox">
+      <div class='form-group' style="overflow: auto; border-radius: 5px 5px 8px 8px">
+        <textarea readonly rows="10" class="w-100 p-2"
+                  style="resize: none; border-width: 0"
+                  id="chatlog"></textarea>
+      </div>
+      <div class="input-group w-100">
+        <input class="form-control input-group-text" type="text" id="chattext">
+        <div class="input-group-append">
+          <input class="btn btn-secondary" type="submit" value="Send" id="chatsend">
+        </div>
+      </div>
+    </div>
+  </div>
   {{ room_name|json_script:'room-name' }}
   {{ user_name|json_script:'user-name' }}
   {{ anon|json_script:'is-anon' }}

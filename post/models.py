@@ -8,7 +8,7 @@ class Post(models.Model):
     content = models.TextField(
         null=False,
         blank=False,
-        max_length=120
+        max_length=500
     )
 
     likes = models.ManyToManyField(
@@ -20,6 +20,14 @@ class Post(models.Model):
     author = models.ForeignKey(
         to='user.User',
         on_delete=models.CASCADE
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
     )
 
     def get_absolute_url(self):

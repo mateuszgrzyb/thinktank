@@ -12,7 +12,11 @@
         <a href="{% url 'user:show_user' pk=post.author.pk %}">
           <h5 class="card-title">@{{ post.author }}</h5>
         </a>
-        <p class="card-text">{{ post.content }}</p>
+
+        {% comment %}
+        <pre class="card-text w-100 p-2" style="background-color: #e2e2e2; border-radius: 3px">{{ post.content }}</pre>
+        {% endcomment %}
+        <p class="card-text">{{ post.content|linebreaksbr }}</p>
 
         <div class="btn-toolbar">
 
@@ -37,6 +41,8 @@
     </div>
   {% endfor %}
 
+
+  <p style="padding-bottom: 100px"></p>
   {% include 'pagination.html' %}
 
   <script src="{% static 'post/viewposts.js' %}"></script>

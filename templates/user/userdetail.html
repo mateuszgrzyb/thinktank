@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+  <div class="container-sm card">
+    <div class="card-body">
+      <h5 class="card-title">@{{ user.username }}</h5>
+      <p class="card-text">{{ user.bio }}</p>
+
+      {% with user.following.count as c %}
+        {% if c > 0 %}
+          <a href="{% url 'user:following' pk=user.pk %}">
+        {% else %}
+          <a href="#">
+        {% endif %}
+            Following: {{ c }}
+          </a>
+      {% endwith %}
+
+      {% with user.followers.count as c %}
+        {% if c > 0 %}
+          <a href="{% url 'user:followers' pk=user.pk %}">
+        {% else %}
+          <a href="#">
+        {% endif %}
+            Followers: {{ c }}
+          </a>
+      {% endwith %}
+
+    </div>
+  </div>
+{% endblock %}

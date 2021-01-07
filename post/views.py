@@ -49,6 +49,7 @@ class ViewPosts(ListView):
     model = Post
     paginate_by = 3
     template_name = 'post/viewposts.html'
+    ordering = '-pk'
 
 
 class LikePost(View):
