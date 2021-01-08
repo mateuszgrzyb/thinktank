@@ -1,64 +1,25 @@
 class Ajax {
-  constructor(url) {
-    try {
-      const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value
+  constructor() {
+    const csrfdom = document.querySelector('[name=csrfmiddlewaretoken]')
+    if (csrfdom) {
+      const csrftoken = csrfdom.value
+      const url = document.getElementById('ajax_url').textContent
       this.request = new Request(
         url,
-        {headers: {'X-CSRFToken': csrftoken}}
+        {
+          headers: {'X-CSRFToken': csrftoken},
+          method: 'POST',
+          mode: 'same-origin',
+        }
       )
-    } catch (e) {
-      if (e instanceof TypeError) {
-        alert('TRYING TO USE AJAX WITH POST METHOD WITHOUT CSRF TOKEN!!!')
-      } else {
-        throw e;
-      }
+    } else {
+      alert('TRYING TO USE AJAX WITH POST METHOD WITHOUT CSRF TOKEN!!!')
     }
   }
 
-  send(data, onmessage) {
-    fetch(
-      this.request,
-      {
-        method: 'POST',
-        body: JSON.stringify(data),
-        mode: 'same-origin'
-      })
-      .then(response => response.json())
-      .then(data => { console.log(data); return data})
-      .then(data => onmessage(data))
-  }
 
-  /*
-  fetch(pk, onmessage) {
-    this.send({type: 'fetch', pk: pk}, onmessage)
-  }
-
-  update(pk, onmessage) {
-    this.send({type: 'update', pk: pk}, onmessage)
-  }
-
-   */
-}
-
-class FetchUpdateAjax extends Ajax {
-  fetch(pk, onmessage) {
-    this.send({type: 'fetch', pk: pk}, onmessage)
-  }
-
-
-  update(pk, onmessage) {
-    this.send({type: 'update', pk: pk}, onmessage)
+  send(data) {
+    fetch(this.request, {body: JSON.stringify(data)})
   }
 }
 
-class AutomaticAjax {
-  constructor(url) {
-    this.xhttp = new XMLHttpRequest()
-    this.xhttp.onreadystatechange = () => {
-      if (this.xhttp.readyState == 4 && this.xhttp.status == 200) {
-        alert(this.xhttp.responseText)
-      }
-    }
-    this.xhttp.open('POST', url, true)
-  }
-}

@@ -1,12 +1,21 @@
 
-const url = document.getElementById('like_post_url').textContent
 
-const likeajax = new FetchUpdateAjax(url)
+const likeajax = new Ajax()
+const yes = 'LIKED!'
+const no = 'Like'
 
-function buttonupdate(data, button) {
-  if (data.response === "okay") {
-    button.innerHTML =
-      `${(data.liked) ? 'LIKED!' : 'Like'}  ${data.likes}`
+function buttonupdate(liked, count) {
+  switch (liked.innerHTML) {
+    case no:
+      liked.innerHTML = yes
+      count.innerHTML++
+      break
+    case yes:
+      liked.innerHTML = no
+      count.innerHTML--
+      break
+    default:
+      alert('LIKE UPDATE ERROR!!')
   }
 }
 
@@ -17,11 +26,12 @@ document
   .forEach(function (button)  {
 
     const id = button.id.split('_')[1]
-
-    likeajax.fetch(id, data => buttonupdate(data, button))
+    const liked = button.children[0]
+    const count = button.children[1]
 
     button.onclick = (event) => {
-      likeajax.update(id, data => buttonupdate(data, button))
+      likeajax.send({request: 'like', id: id})
+      buttonupdate(liked, count)
     }
   })
 

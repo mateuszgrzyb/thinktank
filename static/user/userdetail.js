@@ -1,9 +1,8 @@
 
 
-const url = document.getElementById('follow_user_url').textContent
-const user_followers_url = document.getElementById('user_followers_url').textContent
+const url = document.getElementById('user_followers_url').textContent
 const pk = document.getElementById('follow_user_pk').textContent
-const followajax = new FetchUpdateAjax(url)
+const ajax = new Ajax()
 
 
 /*
@@ -19,42 +18,55 @@ const followajax = new FetchUpdateAjax(url)
  *
  */
 
-function buttonupdate(data, button, link, count) {
-  if (data.response === "okay") {
-    if (data.following) {
-      button.innerHTML = 'FOLLOWING!'
-      //count.innerHTML = (count.innerHTML + 1)
+class State {
+  constructor(label, link) {
+    this.label = label
+    this.link = link
+  }
+}
+
+const yes = new State('FOLLOWING!', url)
+const no = new State('Follow', '#')
+
+/*
+
+const yes = {
+  label: 'FOLLOWING!',
+  link: url,
+}
+
+const no = {
+  label: 'Follow',
+  link: '#',
+}
+
+*/
+
+function buttonupdate(label, link, count) {
+
+  switch (label.innerHTML) {
+    case no.label:
+      label.innerHTML = yes.label
+      link.href = yes.link
       count.innerHTML++
-      if (count.innerHTML != 0) {
-        link.href = user_followers_url
-      }
-    } else {
-      button.innerHTML = 'Follow'
+      break
+    case yes.label:
+      label.innerHTML = no.label
+      link.href = no.link
       count.innerHTML--
-      if (count.innerHTML == 0) {
-        link.href = "#"
-      }
-      //count.innerHTML = (count.innerHTML - 1)
-    }
+      break
+    default:
+      alert('FOLLOW UPDATE ERROR!!')
   }
 }
 
-function buttonfetch(data, button) {
-  if (data.response === "okay") {
-    if (data.following) {
-      button.innerHTML = 'FOLLOWING!'
-    } else {
-      button.innerHTML = 'Follow'
-    }
-  }
-}
-
-const button = document.getElementById('follow')
+const button = document.getElementById('followers_button')
 const link = document.getElementById('followers_link')
 const count = document.getElementById('followers_count')
+const label = document.getElementById('followers_label')
 
-followajax.fetch(pk, data => buttonfetch(data, button))
 
-button.onclick = (event) =>  {
-  followajax.update(pk, data => buttonupdate(data, button, link, count))
+button.onclick = (event) => {
+  ajax.send({request: 'follow', id: pk})
+  buttonupdate(label, link, count)
 }

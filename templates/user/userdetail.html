@@ -29,11 +29,13 @@
         {% else %}
           <a id="followers_link" href="#">
         {% endif %}
-            Followers: <span id="followers_count">{{ c }}</span>
+            Followers:<span id="followers_count">{{ c }}</span>
           </a>
       {% endwith %}
       {% if user.is_authenticated and profile.pk != user.pk %}
-        <button id="follow" class="btn btn-sm btn-primary"></button>
+        <button id="followers_button" class="btn btn-sm btn-primary">
+          <span id="followers_label">{% if profile.is_followed %}FOLLOWING!{% else %}Follow{% endif %}</span>
+        </button>
       {% endif %}
 
     </div>

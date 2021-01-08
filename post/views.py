@@ -1,11 +1,6 @@
-import json
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 # Create your views here.
-from django.http import HttpRequest
-from django.http import JsonResponse
 from django.urls import reverse_lazy
-from django.views import View
 from django.views.generic import CreateView
 from django.views.generic import DeleteView
 from django.views.generic import ListView
@@ -13,9 +8,6 @@ from django.views.generic import UpdateView
 
 from post.mixins import UserIsOwnerMixin
 from post.models import Post
-from post.models import posts
-from thinktank.helpers import AjaxView
-from user.models import User
 
 
 class CreatePost(LoginRequiredMixin, CreateView):
@@ -52,53 +44,10 @@ class ViewPosts(ListView):
     template_name = 'post/viewposts.html'
     ordering = '-pk'
 
-
-class LikeView(AjaxView):
-
-    def update_db(self, user: User, pk: int):
-        user.click_like(pk)
-
-    def okay_response(self, user: User, pk: int, **kwargs):
-        likes = posts().get(pk=pk).likes
-        return super().okay_response(
-            user,
-            pk,
-            likes=likes.count(),
-            liked=likes.filter(pk=user.pk).exists(),
-            **kwargs
-        )
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(object_list=object_list, **kwargs)
+        for post in context['object_list']:
+            post.liked = post.likes.filter(pk=self.request.user.pk).exists()
+        return context
 
 
-class OldLikeView(View):
-
-    def post(self, request: HttpRequest) -> JsonResponse:
-
-        user: User = request.user
-        data = json.loads(request.body)
-        pk = data['pk']
-
-        def okay_response():
-
-            likes = posts().get(pk=pk).likes
-            print(likes.count())
-
-            return JsonResponse({
-                'response': 'okay',
-                'likes': likes.count(),
-                'user': likes.filter(pk=user.pk).exists()
-            })
-
-        if data['type'] == 'fetch':
-
-            return okay_response()
-
-        elif data['type'] == 'update':
-            if user.is_anonymous:
-                return JsonResponse({'response': 'error'})
-            else:
-                user.click_like(pk)
-
-            return okay_response()
-
-        else:
-            raise Exception("Bad ajax request type")

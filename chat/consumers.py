@@ -55,10 +55,19 @@ def historydecorator(anonymous: bool):
 class ChatConsumer(AbstractChatConsumer):
 
     async def connect(self):
+        print(self.scope['user'])
+        print(self.scope['user'].is_anonymous)
         if self.scope['user'].is_anonymous:
             await self.close()
         else:
             await super().connect()
+
+    async def disconnect(self, code):
+        try:
+            await super().disconnect(code)
+        except Exception:
+            pass
+
 
 
 @historydecorator(anonymous=True)

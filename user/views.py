@@ -16,7 +16,7 @@ from django.views.generic import CreateView, UpdateView
 from django.views.generic import DetailView
 from django.views.generic import ListView
 
-from thinktank.helpers import AjaxView
+from thinktank.models import AjaxView
 from user.forms import RegistrationForm
 from user.models import User
 from user.models import users
@@ -84,6 +84,13 @@ class ShowUserView(DetailView):
     model = User
     context_object_name = 'profile'
     template_name = 'user/userdetail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        profile = context['profile']
+        profile.is_followed = profile.followers.filter(pk=self.request.user.pk).exists()
+
+        return context
 
 
 class UserListView(ListView):
