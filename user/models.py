@@ -1,10 +1,39 @@
+import uuid
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 # Create your models here.
-
 from post.models import Post
+
+
+class PrivRoom(models.Model):
+    user1 = models.ForeignKey(
+        'User',
+        related_name='user1',
+        on_delete=models.CASCADE,
+    )
+
+    user2 = models.ForeignKey(
+        'User',
+        related_name='user2',
+        on_delete=models.CASCADE,
+    )
+
+    url = models.UUIDField(
+        default=uuid.uuid4,
+        editable=False
+    )
+
+    class Meta:
+        unique_together = ('user1', 'user2')
+
+    def can_be_entered_by(self, user) -> bool:
+        return user.pk == self.user1.pk or user.pk == self.user2.pk
+
+
+def priv_rooms():
+    return PrivRoom.objects.all()
 
 
 class User(AbstractUser):
@@ -15,25 +44,17 @@ class User(AbstractUser):
     )
 
     following = models.ManyToManyField(
-        'User',
+        'self',
         blank=True,
         symmetrical=False,
         related_name='followers',
     )
 
-    # def click_like(self, post_pk: int):
-    #     posts = self.posts_liked_by_user
-    #     if posts.filter(pk=post_pk).exists():
-    #         posts.remove(post_pk)
-    #     else:
-    #         posts.add(post_pk)
-    #
-    # def click_follow(self, user_pk: int):
-    #     _users = self.following
-    #     if _users.filter(pk=user_pk).exists():
-    #         _users.remove(user_pk)
-    #     else:
-    #         _users.add(user_pk)
+    priv_chats = models.ManyToManyField(
+        'self',
+        symmetrical=False,
+        through=PrivRoom,
+    )
 
     def add_or_remove(self, pk: int, group):
         if group.filter(pk=pk).exists():
@@ -50,3 +71,16 @@ class User(AbstractUser):
 
 def users():
     return User.objects
+
+
+class Message(models.Model):
+    body = models.TextField()
+
+    room = models.ForeignKey(
+        PrivRoom,
+        on_delete=models.CASCADE
+    )
+
+    time_created = models.DateTimeField(
+        auto_now_add=True
+    )

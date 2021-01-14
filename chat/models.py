@@ -1,15 +1,19 @@
+import uuid
+
 from django.db import models
+
+from user.models import User
 
 
 class Room(models.Model):
-    url = models.TextField(blank=False, null=False)
-    name = models.TextField(blank=False, null=False)
     anonymous = models.BooleanField(default=False)
+    name = models.TextField(blank=False, null=False)
+    url = models.TextField(blank=False, null=False)
 
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['id', 'anonymous'],
+                fields=['url', 'anonymous'],
                 name='composite primary key',
             )
         ]
@@ -20,3 +24,5 @@ class Room(models.Model):
 
 def rooms():
     return Room.objects
+
+

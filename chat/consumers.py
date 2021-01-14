@@ -6,8 +6,16 @@ from chat.models import rooms
 
 
 # noinspection PyAttributeOutsideInit
+from user.models import priv_rooms
+from user.models import PrivRoom
+
+
 class AbstractChatConsumer(AsyncWebsocketConsumer):
     history = {}
+
+    async def send(self, text_data=None, bytes_data=None, close=False):
+        print(text_data)
+        await super().send(text_data, bytes_data, close)
 
     async def connect(self):
         self.room_name = self.scope['url_route']['kwargs']['room_name']
@@ -32,6 +40,8 @@ class AbstractChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         msg = json.loads(text_data) | {'type': 'chat_msg'}
 
+        self.history[self.room_name].append(msg)
+
         await self.channel_layer.group_send(
             self.room_group_name,
             msg
@@ -39,21 +49,18 @@ class AbstractChatConsumer(AsyncWebsocketConsumer):
 
     async def chat_msg(self, event):
         msg = {k: event[k] for k in event if k != 'type'}
-        self.history[self.room_name].append(msg)
         await self.send(text_data=json.dumps(msg))
 
 
-def historydecorator(anonymous: bool):
+def historydecorator(allrooms):
     def wrapped(clazz: type):
-        clazz.history = {room.url: [] for room in rooms().filter(anonymous=anonymous)}
+        clazz.history = {room.url: [] for room in allrooms}
         return clazz
 
     return wrapped
 
 
-@historydecorator(anonymous=False)
-class ChatConsumer(AbstractChatConsumer):
-
+class LoggedChatConsumer(AbstractChatConsumer):
     async def connect(self):
         print(self.scope['user'])
         print(self.scope['user'].is_anonymous)
@@ -69,7 +76,20 @@ class ChatConsumer(AbstractChatConsumer):
             pass
 
 
+@historydecorator(rooms().filter(anonymous=False))
+class ChatConsumer(LoggedChatConsumer):
+    pass
 
-@historydecorator(anonymous=True)
+
+@historydecorator(rooms().filter(anonymous=True))
 class AnonChatConsumer(AbstractChatConsumer):
     pass
+
+
+@historydecorator(priv_rooms())
+class PrivChatConsumer(LoggedChatConsumer):
+    async def connect(self):
+        await super().connect()
+        room = PrivRoom.objects.filter(url=self.room_name).first()
+        if room is None or room.can_be_entered_by(self.scope['user']):
+            await self.close()

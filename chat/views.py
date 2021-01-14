@@ -1,6 +1,8 @@
 from itertools import zip_longest
+from random import randrange
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.sessions.models import Session
 from django.http import HttpResponse, HttpRequest, Http404
 from django.shortcuts import render, redirect
 from django.views import View
@@ -10,7 +12,6 @@ from chat.models import rooms
 
 class HomeView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
-
         acs = rooms().filter(anonymous=True)
         cs = rooms().filter(anonymous=False)
         print(acs)
@@ -64,13 +65,22 @@ def abstractroomview(anon: bool):
 
 
 class AnonRoomView(abstractroomview(anon=True)):
-    ANID = 0
+
+    def get_anon_username(self, session):
+        username = 'username'
+
+        if username not in session:
+            anon_id = str(randrange(0, 9999)).zfill(4)
+            session[username] = f'anon#{anon_id}'
+
+        return session[username]
 
     def username(self, request: HttpRequest):
+
+        # print(request.session['username'])
+
         if request.user.is_anonymous:
-            print('AAA')
-            AnonRoomView.ANID += 1
-            return f'anon#{str(self.ANID).zfill(4)}'
+            return self.get_anon_username(request.session)
         else:
             return super().username(request)
 

@@ -4,18 +4,21 @@ const chattext = document.querySelector('#chattext')
 const chatlog = document.querySelector('#chatlog')
 const chatsend = document.querySelector('#chatsend')
 
-const name = JSON.parse(document.getElementById('room-name').textContent)
+const room = JSON.parse(document.getElementById('room-name').textContent)
 const user = JSON.parse(document.getElementById('user-name').textContent)
 const isAnon = JSON.parse(document.getElementById('is-anon').textContent)
 
 const s = new WebSocket(
-  `ws://${window.location.host}/ws/${isAnon}chat/${name}/`
+  `ws://${window.location.host}/ws/${isAnon}chat/${room}/`
 )
+
+chatlog.value = ''
 
 s.onmessage = event => {
   const data = JSON.parse(event.data)
   chatlog.value +=
-    `\n${data.from}: ${data.msg}`
+    `${data.from} ${data.from === user ? '>>>' : '#'} ${data.msg}\n`
+
   chatlog.scrollTop = chatlog.scrollHeight
 }
 
@@ -30,17 +33,16 @@ function sendmsg() {
   }
 }
 
-chatsend.onclick = event => {
+chatsend.onclick = (event) => {
   sendmsg()
 }
 
-chattext.onkeyup = event => {
+chattext.onkeyup = (event) => {
   if (event.key === 'Enter') {
     sendmsg()
   }
 }
 
-
-s.onclose = event => {
+s.onclose = (event) => {
   alert('socket closed for some reason')
 }
