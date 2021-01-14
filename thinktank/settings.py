@@ -124,6 +124,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+STATIC_ROOT = '/www/thinktank/static'
+
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]
