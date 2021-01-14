@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
-
+import socket
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -26,7 +26,11 @@ SECRET_KEY = 'avhg8g4b)^-f21160oi5ne_tk8qfz$0f@80sw@*stb_$)!lp9*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    socket.gethostbyname(socket.gethostname()),
+    'localhost',
+    '127.0.0.1',
+]
 
 # Application definition
 
