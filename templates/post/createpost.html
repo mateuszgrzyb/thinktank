@@ -1,9 +1,27 @@
 
 {% extends 'base.html' %}
 {% block content %}
+
   <form method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Create">
+    <div class="container-sm card mb-5 h-50" id="post_{{ object.pk }}">
+      <div class="card-body">
+
+        <h5 class="card-title">@{{ user.username }}, create new post</h5>
+
+        <p>
+          <textarea style="width: 100%; resize: none; border: none" name="{{ form.content.name }}" id="{{ form.content.id }}"required></textarea>
+        </p>
+
+        <div class="btn-toolbar">
+
+          <div class="btn-group mr-auto">
+            <input class="btn btn-sm btn-primary" type="submit" value="Create">
+          </div>
+
+        </div>
+
+      </div>
+    </div>
   </form>
 {% endblock %}

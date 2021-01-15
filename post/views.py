@@ -36,6 +36,7 @@ class UpdatePost(UserIsOwnerMixin, UpdateView):
 class DeletePost(UserIsOwnerMixin, DeleteView):
     model = Post
     success_url = reverse_lazy('post:view_posts')
+    template_name = 'post/deletepost.html'
 
 
 class ViewPosts(ListView):
