@@ -10,6 +10,7 @@
 
         <p>
           <textarea
+            rows="8"
             style="width: 100%; resize: none; border: none"
             name="{{ form.content.name }}"
             id="{{ form.content.id }}"
@@ -22,7 +23,7 @@
           <div class="btn-group mr-auto">
             <input class="btn btn-sm btn-primary" type="submit" value="Update">
           </div>
-
+          <button class="btn btn-sm btn-primary" onclick="window.history.back()">Back</button>
         </div>
 
       </div>

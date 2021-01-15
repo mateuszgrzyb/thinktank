@@ -4,13 +4,19 @@
 
   <form method="post">
     {% csrf_token %}
-    <div class="container-sm card mb-5 h-50" id="post_{{ object.pk }}">
+    <div class="container-sm card mb-5 vh-50" id="post_{{ object.pk }}">
       <div class="card-body">
 
         <h5 class="card-title">@{{ user.username }}, create new post</h5>
 
         <p>
-          <textarea style="width: 100%; resize: none; border: none" name="{{ form.content.name }}" id="{{ form.content.id }}"required></textarea>
+          <textarea
+            rows="8"
+            style="width: 100%; resize: none; border: none"
+            name="{{ form.content.name }}"
+            id="{{ form.content.id }}"
+            required
+          ></textarea>
         </p>
 
         <div class="btn-toolbar">
@@ -18,6 +24,7 @@
           <div class="btn-group mr-auto">
             <input class="btn btn-sm btn-primary" type="submit" value="Create">
           </div>
+          <button class="btn btn-sm btn-primary" onclick="window.history.back()">Back</button>
 
         </div>
 

@@ -16,7 +16,13 @@
         <div class="btn-toolbar">
 
           <div class="btn-group mr-auto">
-            <button class="btn btn-sm btn-primary" id="button_{{ post.pk }}">
+            <button
+              {% if user.is_anonymous %}
+                disabled
+              {% endif %}
+              class="btn btn-sm btn-primary"
+              id="button_{{ post.pk }}"
+            >
               <span>{% if post.liked %}LIKED!{% else %}Like{% endif %}</span>
               <span>{{ post.likes.count }}</span>
             </button>
