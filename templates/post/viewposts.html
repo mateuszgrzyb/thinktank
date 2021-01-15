@@ -31,7 +31,7 @@
           {% if post.author == user %}
             <div class="input-group ml-auto">
               <form action="{% url 'post:update_post' pk=post.pk %}">
-                <button class="btn btn-sm btn-secondary" type="submit">Edit</button>
+                <button class="btn btn-sm btn-secondary mx-2" type="submit">Edit</button>
               </form>
               <form action="{% url 'post:delete_post' pk=post.pk %}">
                 <button class="btn btn-sm btn-danger" type="submit">Delete</button>

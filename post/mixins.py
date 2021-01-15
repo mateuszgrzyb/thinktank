@@ -1,5 +1,6 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import HttpRequest
 from django.http import HttpResponse
 from django.views.generic.detail import SingleObjectMixin
 

@@ -16,8 +16,8 @@
           <form method="post">{% csrf_token %}
             <input class="btn btn-sm btn-danger" type="submit" value="Delete">
           </form>
-          <button class="btn btn-sm btn-primary" onclick="window.history.back()">Back</button>
         </div>
+        <a href="{{ back }}" class="btn btn-sm btn-primary">Back</a>
 
       </div>
 

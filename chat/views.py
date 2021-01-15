@@ -2,45 +2,31 @@ from itertools import zip_longest
 from random import randrange
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.sessions.models import Session
-from django.http import HttpResponse, HttpRequest, Http404
-from django.shortcuts import render, redirect
+from django.http import Http404
+from django.http import HttpRequest
+from django.http import HttpResponse
+from django.shortcuts import render
 from django.views import View
 
 from chat.models import rooms
+
 
 
 class HomeView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         acs = rooms().filter(anonymous=True)
         cs = rooms().filter(anonymous=False)
-        print(acs)
-        print(cs)
 
         dictedrooms = [
-            {
-                'chatroom': c,
-                'anonchatroom': ac,
-            }
+            {'chatroom': c, 'anonchatroom': ac}
             for c, ac in zip_longest(cs, acs)
         ]
-
-        for room in dictedrooms:
-            print(f"{room['chatroom']} {room['anonchatroom']}")
 
         context = {
             'rooms': dictedrooms
         }
 
         return render(request, 'chat/main.html', context=context)
-
-    # def post(self, request: HttpRequest) -> HttpResponse:
-    #     if (data := request.POST['room'].split(':'))[0] == 'True':
-    #         return redirect('chat:anon', room=data[1])
-    #     elif data[0] == 'False':
-    #         return redirect('chat:room', room=data[1])
-    #     else:
-    #         raise Exception("bruh what the fuck?")
 
 
 def abstractroomview(anon: bool):
