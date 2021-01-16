@@ -7,6 +7,8 @@ def back_button(request: HttpRequest) -> dict:
     prever = 'prever_url'
     default_url = reverse('chat:home')
 
+    referer_url = request.META.get('HTTP_REFERER')
+
     prever_url = request.session.get(prever, default_url)
     prev_url = request.session.get(prev, default_url)
     curr_url = request.get_full_path()
@@ -19,4 +21,7 @@ def back_button(request: HttpRequest) -> dict:
     request.session[prev] = curr_url
     request.session[prever] = prev_url
 
-    return {'back': prev_url}
+    return {
+        'back': referer_url
+        #'back': prev_url
+    }
