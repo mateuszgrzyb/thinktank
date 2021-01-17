@@ -4,7 +4,6 @@
 
   {% csrf_token %}
 
-  <script id="follow_user_url" type="application/json">{% url 'user:follow_user' %}</script>
   <script id="follow_user_pk" type="application/json">{{ profile.pk }}</script>
   <script id="user_followers_url" type="application/json">{% url 'user:followers' pk=profile.pk %}</script>
 

@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as BaseLoginView
@@ -8,15 +6,13 @@ from django.contrib.auth.views import PasswordChangeView as BasePasswordChangeVi
 from django.http import Http404
 from django.http import HttpRequest
 from django.http import HttpResponse
-from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import ListView
+from thinktank.mixins import BackSuccessUrlMixin
 
-from thinktank.models import AjaxView
 from user.forms import RegistrationForm
 from user.models import User
 from user.models import users
@@ -26,11 +22,11 @@ class LogoutView(BaseLogoutView):
     pass
 
 
-class LoginView(BaseLoginView):
+class LoginView(BackSuccessUrlMixin, BaseLoginView):
     template_name = 'user/login.html'
 
 
-class RegisterView(View):
+class RegisterView(BackSuccessUrlMixin, View):
     def get(self, request: HttpRequest) -> HttpResponse:
         return render(
             request,
@@ -55,29 +51,13 @@ class RegisterView(View):
         return redirect('post:view_posts')
 
 
-def register_view(request: HttpRequest) -> HttpResponse:
-    form = RegistrationForm(request.POST or None)
-    if request.method == 'POST' and form.is_valid():
-        user = users().create_user(
-            username=form.cleaned_data['username'],
-            email=form.cleaned_data['email'],
-            password=form.cleaned_data['password1'],
-        )
-        login(request, user)
-        return redirect('post:view_posts')
-
-    return render(
-        request,
-        template_name='user/register.html',
-        context={
-            'form': form
-        }
-    )
-
-
-class PasswordChangeView(LoginRequiredMixin, BasePasswordChangeView):
+class PasswordChangeView(
+    BackSuccessUrlMixin,
+    LoginRequiredMixin,
+    BasePasswordChangeView,
+):
     template_name = 'user/change_password.html'
-    success_url = reverse_lazy('post:view_posts')
+    # success_url = reverse_lazy('post:view_posts')
 
 
 class ShowUserView(DetailView):
@@ -127,28 +107,3 @@ class FollowingView(UserListView):
         context_data = super().get_context_data(object_list=object_list, **kwargs)
         info = {'info': f'{self.get_user().username.capitalize()} is following'}
         return context_data | info
-
-
-class FollowUserView(AjaxView):
-
-    def okay_response(self, user: User, pk: int, **kwargs):
-        return super().okay_response(
-            user,
-            pk,
-            following=user.following.filter(pk=pk).exists(),
-            **kwargs
-        )
-
-    def update_db(self, user: User, pk: int):
-        user.click_follow(pk)
-
-
-class FollowNumbersView(View):
-    def post(self, request: HttpRequest) -> JsonResponse:
-        user = request.user
-        data = json.loads(request.body)
-        pk = data['pk']
-
-        return JsonResponse({})
-
-

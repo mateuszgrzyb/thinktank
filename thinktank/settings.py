@@ -55,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'thinktank.middleware.BackMiddleware',
 ]
 
 ROOT_URLCONF = 'thinktank.urls'
@@ -67,11 +68,12 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'thinktank.context_processors.back_button',
+                'thinktank.context_processors.navbar',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'thinktank.context_processors.back_button',
             ],
         },
     },
@@ -143,7 +145,6 @@ CHANNEL_LAYERS = {
 }
 
 LOGIN_URL = reverse_lazy('user:login')
-LOGIN_REDIRECT_URL = reverse_lazy('post:view_posts')
 LOGOUT_REDIRECT_URL = reverse_lazy('post:view_posts')
 
 AUTH_USER_MODEL = 'user.User'

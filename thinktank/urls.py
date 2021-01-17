@@ -2,7 +2,7 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from thinktank.models import AjaxView
+from thinktank.mixins import AjaxView
 
 urlpatterns = [
     path('admin/', admin.site.urls),

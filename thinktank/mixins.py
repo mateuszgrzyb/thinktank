@@ -5,6 +5,8 @@ from django.http import HttpRequest
 from django.http import HttpResponse
 from django.views import View
 
+from thinktank.helpers import back_url
+
 
 class AjaxView(LoginRequiredMixin, View):
     switch = {
@@ -21,3 +23,8 @@ class AjaxView(LoginRequiredMixin, View):
         )
 
         return HttpResponse(status=200)
+
+
+class BackSuccessUrlMixin:
+    def get_success_url(self):
+        return back_url(self.request)

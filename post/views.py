@@ -8,34 +8,47 @@ from django.views.generic import UpdateView
 
 from post.mixins import UserIsOwnerMixin
 from post.models import Post
+from thinktank.mixins import BackSuccessUrlMixin
 
 
-class CreatePost(LoginRequiredMixin, CreateView):
+class CreatePost(
+    BackSuccessUrlMixin,
+    LoginRequiredMixin,
+    CreateView
+):
     model = Post
     fields = [
         'content'
     ]
 
     template_name = 'post/createpost.html'
-    success_url = reverse_lazy('post:view_posts')
+    #success_url = reverse_lazy('post:view_posts')
 
     def form_valid(self, form):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
 
-class UpdatePost(UserIsOwnerMixin, UpdateView):
+class UpdatePost(
+    BackSuccessUrlMixin,
+    UserIsOwnerMixin,
+    UpdateView
+):
     model = Post
     fields = [
         'content'
     ]
     template_name = 'post/updatepost.html'
-    success_url = reverse_lazy('post:view_posts')
+    #success_url = reverse_lazy('post:view_posts')
 
 
-class DeletePost(UserIsOwnerMixin, DeleteView):
+class DeletePost(
+    BackSuccessUrlMixin,
+    UserIsOwnerMixin,
+    DeleteView
+):
     model = Post
-    success_url = reverse_lazy('post:view_posts')
+    # success_url = reverse_lazy('post:view_posts')
     template_name = 'post/deletepost.html'
 
 
