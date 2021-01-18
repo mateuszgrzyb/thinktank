@@ -10,11 +10,11 @@ from django.views.generic import UpdateView
 
 from post.mixins import UserIsOwnerMixin
 from post.models import Post
-from thinktank.mixins import BackSuccessUrlNextPageMixin
+from thinktank.mixins import BackUrlMixin
 
 
 class CreatePost(
-    BackSuccessUrlNextPageMixin,
+    BackUrlMixin,
     LoginRequiredMixin,
     CreateView
 ):
@@ -33,7 +33,7 @@ class CreatePost(
 
 
 class UpdatePost(
-    BackSuccessUrlNextPageMixin,
+    BackUrlMixin,
     UserIsOwnerMixin,
     UpdateView
 ):
@@ -46,7 +46,7 @@ class UpdatePost(
 
 
 class DeletePost(
-    BackSuccessUrlNextPageMixin,
+    BackUrlMixin,
     UserIsOwnerMixin,
     DeleteView
 ):

@@ -3,10 +3,10 @@ from django.urls import reverse
 
 
 def back_url(request: HttpRequest) -> str:
+
     prev = 'prev_url'
     prever = 'prever_url'
     default_url = reverse('home')
-
     referer_url = request.META.get('HTTP_REFERER')
 
     prever_url = request.session.get(prever, default_url)
@@ -21,6 +21,4 @@ def back_url(request: HttpRequest) -> str:
     request.session[prev] = curr_url
     request.session[prever] = prev_url
 
-    request.session['back'] = referer_url
-
-    return referer_url
+    return prev_url

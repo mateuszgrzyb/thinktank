@@ -12,22 +12,22 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import FormView
 from django.views.generic import ListView
-from thinktank.mixins import BackSuccessUrlNextPageMixin
+from thinktank.mixins import BackUrlMixin
 
 from user.forms import RegistrationForm
 from user.models import User
 from user.models import users
 
 
-class LogoutView(BackSuccessUrlNextPageMixin, BaseLogoutView):
+class LogoutView(BackUrlMixin, BaseLogoutView):
     pass
 
 
-class LoginView(BackSuccessUrlNextPageMixin, BaseLoginView):
+class LoginView(BackUrlMixin, BaseLoginView):
     template_name = 'user/login.html'
 
 
-class RegisterView(BackSuccessUrlNextPageMixin, FormView):
+class RegisterView(BackUrlMixin, FormView):
     template_name = 'user/register.html'
     form_class = RegistrationForm
 
@@ -44,7 +44,7 @@ class RegisterView(BackSuccessUrlNextPageMixin, FormView):
 
 
 class PasswordChangeView(
-    BackSuccessUrlNextPageMixin,
+    BackUrlMixin,
     LoginRequiredMixin,
     BasePasswordChangeView,
 ):

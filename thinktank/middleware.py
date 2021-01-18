@@ -11,12 +11,6 @@ class BackMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
-
-        print()
-        print(f'from: {request.META.get("HTTP_REFERER")}')
-        print(f'to: {request.get_full_path()}')
-        print()
-
         return self.get_response(request)
 
 
