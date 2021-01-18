@@ -10,12 +10,12 @@ class PasswordField(forms.CharField):
 class RegistrationForm(forms.Form):
     username = forms.CharField()
     email = forms.EmailField()
-    password1 = PasswordField()
-    password2 = PasswordField()
+    password = PasswordField()
+    password_again = PasswordField()
 
     def is_valid(self):
         return super().is_valid() and \
             not users() \
             .filter(username=self.data['username']) \
             .exists() and \
-            self.data['password1'] == self.data['password2']
+            self.data['password'] == self.data['password_again']

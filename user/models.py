@@ -56,16 +56,16 @@ class User(AbstractUser):
         through=PrivRoom,
     )
 
-    def add_or_remove(self, pk: int, group):
+    def add_or_remove(self, pk: int, group) -> None:
         if group.filter(pk=pk).exists():
             group.remove(pk)
         else:
             group.add(pk)
 
-    def click_like(self, post_pk: int):
+    def click_like(self, post_pk: int) -> None:
         self.add_or_remove(post_pk, self.posts_liked_by_user)
 
-    def click_follow(self, user_pk: int):
+    def click_follow(self, user_pk: int) -> None:
         self.add_or_remove(user_pk, self.following)
 
 

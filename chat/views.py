@@ -11,8 +11,7 @@ from django.views import View
 from chat.models import rooms
 
 
-
-class HomeView(View):
+class GroupChatSelectionView(View):
     def get(self, request: HttpRequest) -> HttpResponse:
         acs = rooms().filter(anonymous=True)
         cs = rooms().filter(anonymous=False)
@@ -63,8 +62,6 @@ class AnonRoomView(abstractroomview(anon=True)):
 
     def username(self, request: HttpRequest):
 
-        # print(request.session['username'])
-
         if request.user.is_anonymous:
             return self.get_anon_username(request.session)
         else:
@@ -73,3 +70,13 @@ class AnonRoomView(abstractroomview(anon=True)):
 
 class RoomView(LoginRequiredMixin, abstractroomview(anon=False)):
     pass
+
+
+class PrivChatSelectionView(View):
+    def get(self, request: HttpRequest) -> HttpResponse:
+        return HttpResponse('choose priv chat')
+
+
+class PrivChatView(View):
+    def get(self, request: HttpRequest, pk: int) -> HttpResponse:
+        return HttpResponse(f'priv chat {pk} selected')

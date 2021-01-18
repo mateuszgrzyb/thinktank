@@ -2,16 +2,40 @@
   <ul class="navbar-nav mr-auto">
 
     <li class="nav-item">
-      <a class="navbar-brand" href="#">ThinkTank</a>
+      <a class="navbar-brand" href="{% url 'home' %}">ThinkTank</a>
     </li>
 
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'chat:home' %}"> Chat </a>
-    </li>
+    {% if user.is_anonymous %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'chat:groupchat_select' %}"> Chat </a>
+      </li>
+    {% else %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+          Chat
+        </a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="{% url 'chat:groupchat_select' %}"> Group Chat </a>
+          <a class="dropdown-item" href="{% url 'chat:privchat_select' %}"> Priv Chat </a>
+        </div>
+      </li>
+    {% endif %}
 
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'post:view_posts' %}"> Posts </a>
-    </li>
+    {% if user.is_anonymous %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'post:view_popular' %}"> Posts </a>
+      </li>
+    {% else %}
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
+          Posts
+        </a>
+        <div class="dropdown-menu dropdown-menu-right">
+          <a class="dropdown-item" href="{% url 'post:view_following' %}"> Following </a>
+          <a class="dropdown-item" href="{% url 'post:view_popular' %}"> Popular </a>
+        </div>
+      </li>
+    {% endif %}
   </ul>
   <ul class="navbar-nav ml-auto">
     <li class="nav-item dropdown">
@@ -24,31 +48,6 @@
           <a class="dropdown-item" href="{{ link.url }}"> {{ link.name }} </a>
         {% endfor %}
       </div>
-    {% comment %}
-    {% if user.is_anonymous %}
-
-      <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-        Hey anon!
-      </a>
-
-      <div class="dropdown-menu dropdown-menu-right">
-        <a class="dropdown-item" href="{% url 'user:login' %}"> Login </a>
-        <a class="dropdown-item" href="{% url 'user:register' %}"> Register </a>
-      </div>
-    {% else %}
-
-        <a class="nav-link dropdown-toggle" href="#" id="navbardrop" data-toggle="dropdown">
-          Hey {{ user.username }}!
-        </a>
-
-        <div class="dropdown-menu dropdown-menu-right">
-          <a class="dropdown-item" href="{% url 'post:create_post' %}"> Create New Post</a>
-          <a class="dropdown-item" href="{% url 'user:change_password' %}"> Change Password </a>
-          <a class="dropdown-item" href="{% url 'user:logout' %}"> Logout </a>
-        </div>
-      {% endif %}
-      {% endcomment %}
     </li>
-
   </ul>
 </nav>

@@ -10,49 +10,41 @@ from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import DetailView
+from django.views.generic import FormView
 from django.views.generic import ListView
-from thinktank.mixins import BackSuccessUrlMixin
+from thinktank.mixins import BackSuccessUrlNextPageMixin
 
 from user.forms import RegistrationForm
 from user.models import User
 from user.models import users
 
 
-class LogoutView(BaseLogoutView):
+class LogoutView(BackSuccessUrlNextPageMixin, BaseLogoutView):
     pass
 
 
-class LoginView(BackSuccessUrlMixin, BaseLoginView):
+class LoginView(BackSuccessUrlNextPageMixin, BaseLoginView):
     template_name = 'user/login.html'
 
 
-class RegisterView(BackSuccessUrlMixin, View):
-    def get(self, request: HttpRequest) -> HttpResponse:
-        return render(
-            request,
-            template_name='user/register.html',
-            context={
-                'form': RegistrationForm()
-            }
-        )
+class RegisterView(BackSuccessUrlNextPageMixin, FormView):
+    template_name = 'user/register.html'
+    form_class = RegistrationForm
 
-    def post(self, request: HttpRequest) -> HttpResponse:
-        form = RegistrationForm(request.POST)
-        if not form.is_valid():
-            return self.get(request)
+    def form_valid(self, form):
+
+        fields = ['username', 'email', 'password']
 
         user = users().create_user(
-            username=form.cleaned_data['username'],
-            email=form.cleaned_data['email'],
-            password=form.cleaned_data['password1'],
+            **{name: form.cleaned_data[name] for name in fields}
         )
 
-        login(request, user)
+        login(self.request, user)
         return redirect('post:view_posts')
 
 
 class PasswordChangeView(
-    BackSuccessUrlMixin,
+    BackSuccessUrlNextPageMixin,
     LoginRequiredMixin,
     BasePasswordChangeView,
 ):
@@ -68,7 +60,8 @@ class ShowUserView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         profile = context['profile']
-        profile.is_followed = profile.followers.filter(pk=self.request.user.pk).exists()
+        upk = self.request.user.pk
+        profile.is_followed = profile.followers.filter(pk=upk).exists()
 
         return context
 

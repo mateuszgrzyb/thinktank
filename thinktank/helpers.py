@@ -5,7 +5,7 @@ from django.urls import reverse
 def back_url(request: HttpRequest) -> str:
     prev = 'prev_url'
     prever = 'prever_url'
-    default_url = reverse('chat:home')
+    default_url = reverse('home')
 
     referer_url = request.META.get('HTTP_REFERER')
 
