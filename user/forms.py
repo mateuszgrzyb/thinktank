@@ -3,19 +3,14 @@ from django import forms
 from user.models import users
 
 
-class PasswordField(forms.CharField):
-    widget = forms.PasswordInput
-
-
 class RegistrationForm(forms.Form):
     username = forms.CharField()
     email = forms.EmailField()
-    password = PasswordField()
-    password_again = PasswordField()
+    password = forms.CharField(widget=forms.PasswordInput)
+    password2 = forms.CharField(widget=forms.PasswordInput)
 
     def is_valid(self):
-        return super().is_valid() and \
-            not users() \
-            .filter(username=self.data['username']) \
-            .exists() and \
-            self.data['password'] == self.data['password_again']
+        user_exist = users().filter(username=self.data['username']).exists()
+        equal_pass = self.data['password'] == self.data['password2']
+        return super().is_valid() and user_exist and equal_pass
+

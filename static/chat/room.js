@@ -8,13 +8,13 @@ const room = JSON.parse(document.getElementById('room-name').textContent)
 const user = JSON.parse(document.getElementById('user-name').textContent)
 const isAnon = JSON.parse(document.getElementById('is-anon').textContent)
 
-const s = new WebSocket(
+const ws = new WebSocket(
   `ws://${window.location.host}/ws/${isAnon}chat/${room}/`
 )
 
 chatlog.value = ''
 
-s.onmessage = event => {
+ws.onmessage = event => {
   const data = JSON.parse(event.data)
   chatlog.value +=
     `${data.from} ${data.from === user ? '>>>' : '#'} ${data.msg}\n`
@@ -25,7 +25,7 @@ s.onmessage = event => {
 function sendmsg() {
   const msg = chattext.value
   if (msg) {
-    s.send(JSON.stringify({
+    ws.send(JSON.stringify({
       'from': user,
       'msg': msg
     }))
@@ -43,6 +43,6 @@ chattext.onkeyup = (event) => {
   }
 }
 
-s.onclose = (event) => {
+ws.onclose = (event) => {
   alert('socket closed for some reason')
 }

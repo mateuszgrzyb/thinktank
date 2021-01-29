@@ -1,13 +1,12 @@
+
 class Ajax {
   constructor() {
     const csrfdom = document.querySelector('[name=csrfmiddlewaretoken]')
     if (csrfdom) {
-      const csrftoken = csrfdom.value
-      const url = document.getElementById('ajax_url').textContent
       this.request = new Request(
-        url,
+        document.getElementById('ajax_url').textContent,
         {
-          headers: {'X-CSRFToken': csrftoken},
+          headers: {'X-CSRFToken': csrfdom.value},
           method: 'POST',
           mode: 'same-origin',
         }
@@ -18,8 +17,7 @@ class Ajax {
   }
 
 
-  send(data) {
-    fetch(this.request, {body: JSON.stringify(data)})
-  }
+  send(request, pk) {
+    fetch(this.request, {body: JSON.stringify({request: request, pk: pk})})}
 }
 

@@ -25,12 +25,12 @@ document
   .querySelectorAll("[id*='button']")
   .forEach(function (button)  {
 
-    const id = button.id.split('_')[1]
+    const pk = button.id.split('_')[1]
     const liked = button.children[0]
     const count = button.children[1]
 
     button.onclick = (event) => {
-      likeajax.send({request: 'like', id: id})
+      likeajax.send('like',pk)
       buttonupdate(liked, count)
     }
   })

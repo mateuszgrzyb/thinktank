@@ -11,6 +11,11 @@ from user.models import PrivRoom
 
 
 class AbstractChatConsumer(AsyncWebsocketConsumer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print(f'{self.__class__.__name__}\'s constructor called.')
+
     history = {}
 
     async def send(self, text_data=None, bytes_data=None, close=False):
@@ -28,10 +33,11 @@ class AbstractChatConsumer(AsyncWebsocketConsumer):
 
         await self.accept()
 
-        for msg in self.history[self.room_name]:
+        for msg in type(self).history[self.room_name]:
             await self.send(text_data=json.dumps(msg))
 
     async def disconnect(self, code):
+        print('disconnect')
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -40,7 +46,7 @@ class AbstractChatConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data=None, bytes_data=None):
         msg = json.loads(text_data) | {'type': 'chat_msg'}
 
-        self.history[self.room_name].append(msg)
+        type(self).history[self.room_name].append(msg)
 
         await self.channel_layer.group_send(
             self.room_group_name,
@@ -52,12 +58,12 @@ class AbstractChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps(msg))
 
 
-def historydecorator(allrooms):
-    def wrapped(clazz: type):
-        clazz.history = {room.url: [] for room in allrooms}
-        return clazz
-
-    return wrapped
+# def historydecorator(allrooms):
+#     def wrapped(clazz: type):
+#         clazz.history = {room.url: [] for room in allrooms}
+#         return clazz
+#
+#     return wrapped
 
 
 class LoggedChatConsumer(AbstractChatConsumer):
@@ -76,20 +82,20 @@ class LoggedChatConsumer(AbstractChatConsumer):
             pass
 
 
-@historydecorator(rooms().filter(anonymous=False))
 class ChatConsumer(LoggedChatConsumer):
-    pass
+    history = {room.url: [] for room in rooms().filter(anonymous=False)}
 
 
-@historydecorator(rooms().filter(anonymous=True))
 class AnonChatConsumer(AbstractChatConsumer):
-    pass
+    history = {room.url: [] for room in rooms().filter(anonymous=True)}
 
 
-@historydecorator(priv_rooms())
+#@historydecorator(priv_rooms())
 class PrivChatConsumer(LoggedChatConsumer):
-    async def connect(self):
-        await super().connect()
-        room = PrivRoom.objects.filter(url=self.room_name).first()
-        if room is None or room.can_be_entered_by(self.scope['user']):
-            await self.close()
+    pass
+#    async def connect(self):
+#        await super().connect()
+#        room = PrivRoom.objects.filter(url=self.room_name).first()
+#        if room is None or room.can_be_entered_by(self.scope['user']):
+#            await self.close()
+#

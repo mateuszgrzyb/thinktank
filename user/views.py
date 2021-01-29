@@ -1,4 +1,5 @@
 from django.contrib.auth import login
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
@@ -33,11 +34,7 @@ class RegisterView(BackUrlMixin, FormView):
 
     def form_valid(self, form):
 
-        fields = ['username', 'email', 'password']
-
-        user = users().create_user(
-            **{name: form.cleaned_data[name] for name in fields}
-        )
+        user = form.save()
 
         login(self.request, user)
         return redirect('post:view_posts')

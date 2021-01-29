@@ -25,7 +25,7 @@ class AjaxView(LoginRequiredMixin, View):
 
         self.switch[data['request']](
             user=request.user,
-            pk=data.get('id'),
+            pk=data.get('pk'),
         )
 
         return HttpResponse(status=200)
