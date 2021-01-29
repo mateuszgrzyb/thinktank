@@ -6,11 +6,13 @@ const chatsend = document.querySelector('#chatsend')
 
 const room = JSON.parse(document.getElementById('room-name').textContent)
 const user = JSON.parse(document.getElementById('user-name').textContent)
-const isAnon = JSON.parse(document.getElementById('is-anon').textContent)
+const type = JSON.parse(document.getElementById('type').textContent)
 
 const ws = new WebSocket(
-  `ws://${window.location.host}/ws/${isAnon}chat/${room}/`
+  `ws://${window.location.host}/ws/${type}chat/${room}/`
 )
+
+console.log(`type: ${type}`)
 
 chatlog.value = ''
 

@@ -12,23 +12,56 @@
           {{ form.errors }}
         </div>
         <div class="form-group">
-          <input type="text" name="{{ form.username.name }}" class="form-control input-group-text" id="input_username" placeholder="Username">
+          <input
+            type="text"
+            name="{{ form.username.name }}"
+            class="form-control input-group-text"
+            id="input_username"
+            placeholder="Username"
+            autocomplete="off">
         </div>
         <div class="form-group">
-          <input type="email" name="{{ form.email.name }}" class="form-control input-group-text" id="input_email" placeholder="Email">
+          <input
+            type="email"
+            name="{{ form.email.name }}"
+            class="form-control input-group-text"
+            id="input_email"
+            placeholder="Email"
+            autocomplete="off">
         </div>
         <div class="form-group">
-          <input type="password" name="{{ form.password.name }}" class="form-control input-group-text" id="input_password1" placeholder="Password">
+          <input
+            type="password"
+            name="{{ form.password.name }}"
+            class="form-control input-group-text"
+            id="input_password1"
+            placeholder="Password"
+            autocomplete="new-password"
+          >
         </div>
         <div class="form-group">
-          <input type="password" name="{{ form.password2.name }}" class="form-control input-group-text" id="input_password2" placeholder="Repeat Password">
+          <input
+            type="password"
+            name="{{ form.password2.name }}"
+            class="form-control input-group-text"
+            id="input_password2"
+            placeholder="Repeat Password"
+            autocomplete="off">
         </div>
         <div class="form-group">
-          <button type="submit" class="btn btn-secondary w-100">Submit</button>
+          <button
+            type="submit"
+            class="btn btn-secondary w-100"
+          >Submit</button>
         </div>
       </form>
       <form action="{% url 'user:login' %}" id="login">
-        <button id='input_login' type="submit" class="btn btn-secondary w-100" form="login">Already have an account? Login</button>
+        <button
+          id='input_login'
+          type="submit"
+          class="btn btn-secondary w-100"
+          form="login"
+        >Already have an account? Login</button>
       </form>
     </div>
   </div>

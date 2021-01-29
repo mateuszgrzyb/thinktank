@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+  {% for convo in convos %}
+    <a href="{% url 'chat:privchat' room=convo.url %}">
+      {% if not convo.user1 == user %}
+        user: {{ convo.user1 }}
+      {% else %}
+        user: {{ convo.user2 }}
+      {% endif %}
+    </a>
+  {% endfor %}
+  <a href="#">Start New Conversation</a>
+{% endblock %}

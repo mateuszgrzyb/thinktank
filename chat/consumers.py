@@ -1,11 +1,13 @@
 import json
 
+from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
+from django.utils.decorators import method_decorator
 
 from chat.models import rooms
 
-
 # noinspection PyAttributeOutsideInit
+from user.models import User
 from user.models import priv_rooms
 from user.models import PrivRoom
 
@@ -90,12 +92,21 @@ class AnonChatConsumer(AbstractChatConsumer):
     history = {room.url: [] for room in rooms().filter(anonymous=True)}
 
 
-#@historydecorator(priv_rooms())
+@sync_to_async
+def check(user: User, url: str):
+    room = PrivRoom.objects.filter(url=url).first()
+    if room is not None and room.can_be_entered_by(user):
+        return True
+
+
+# @historydecorator(priv_rooms())
 class PrivChatConsumer(LoggedChatConsumer):
-    pass
-#    async def connect(self):
-#        await super().connect()
-#        room = PrivRoom.objects.filter(url=self.room_name).first()
-#        if room is None or room.can_be_entered_by(self.scope['user']):
-#            await self.close()
-#
+    history = {str(room.url): [] for room in priv_rooms()}
+
+    async def connect(self):
+        await super().connect()
+        if not await check(self.scope['user'], self.room_name):
+            await self.close()
+        # room = PrivRoom.objects.filter(url=self.room_name).first()
+        # if room is None or room.can_be_entered_by(self.scope['user']):
+        #     await self.close()

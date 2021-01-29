@@ -11,9 +11,7 @@ class BackMiddleware:
         self.get_response = get_response
 
     def __call__(self, request: HttpRequest) -> HttpResponse:
-        print('got request')
         response = self.get_response(request)
-        print('sending response')
         return response
 
 

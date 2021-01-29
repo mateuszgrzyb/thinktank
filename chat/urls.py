@@ -12,5 +12,6 @@ urlpatterns = [
     path('anonchat/<str:room>', AnonRoomView.as_view(), name='anon'),
 
     path('privchat/', PrivChatSelectionView.as_view(), name='privchat_select'),
-    path('privchat/<int:pk>', PrivChatView.as_view(), name='privchat'),
+    path('privchat/<str:room>', PrivChatView.as_view(), name='privchat'),
+    # path('privchat/<str:room>', RoomView.as_view(), name='privchat'),
 ]

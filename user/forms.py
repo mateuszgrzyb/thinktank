@@ -1,4 +1,5 @@
 from django import forms
+from django.core.exceptions import ValidationError
 
 from user.models import users
 
@@ -9,8 +10,23 @@ class RegistrationForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput)
     password2 = forms.CharField(widget=forms.PasswordInput)
 
-    def is_valid(self):
-        user_exist = users().filter(username=self.data['username']).exists()
-        equal_pass = self.data['password'] == self.data['password2']
-        return super().is_valid() and user_exist and equal_pass
+    def clean(self):
+        data = super().clean()
+
+        user_exist = users().filter(username=data['username']).exists()
+        equal_pass = data['password'] == data['password2']
+        if not equal_pass:
+            raise ValidationError("Passwords differ.")
+        elif user_exist:
+            raise ValidationError("The username is taken.")
+
+    def save(self):
+        return users().create_user(**{
+            k: self.cleaned_data[k] for k in [
+                'username',
+                'email',
+                'password',
+            ]
+        })
+
 

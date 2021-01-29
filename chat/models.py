@@ -22,7 +22,22 @@ class Room(models.Model):
         return f'{self.name}'
 
 
+class Message(models.Model):
+    max_size = 100
+    room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    author = models.TextField(blank=False, null=False)
+    body = models.TextField(blank=False, null=False)
+
+    def save(self, *args, **kwargs):
+        if Message.objects.count() == Message.max_size:
+            Message.objects[0].delete()
+
+        super().save(*args, **kwargs)
+
+
 def rooms():
     return Room.objects
 
 
+def messages():
+    return Message.objects

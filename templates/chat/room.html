@@ -18,6 +18,6 @@
   </div>
   {{ room_name|json_script:'room-name' }}
   {{ user_name|json_script:'user-name' }}
-  {{ anon|json_script:'is-anon' }}
+  {{ type|json_script:'type' }}
   <script src="{% static 'chat/room.js' %}"></script>
 {% endblock %}
