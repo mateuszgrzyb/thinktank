@@ -3,6 +3,13 @@
 {% block content %}
   <div class="" style="align-items: center">
     <div class="container p-5 w-75 mybox">
+      <h5>
+        {% if title.name %}
+          {{ title.name }} <a href="{% url 'user:show_user' pk=title.pk %}">{{ title.user }}</a>
+        {% else %}
+          {{ title }}
+        {% endif %}
+      </h5>
       <div class='form-group' style="overflow: auto; border-radius: 5px 5px 8px 8px">
         <textarea readonly rows="10" class="w-100 p-2"
                   style="resize: none; border-width: 0;"

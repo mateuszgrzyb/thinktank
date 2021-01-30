@@ -1,8 +1,4 @@
-import uuid
-
 from django.db import models
-
-from user.models import User
 
 
 class Room(models.Model):
@@ -20,6 +16,19 @@ class Room(models.Model):
 
     def __str__(self):
         return f'{self.name}'
+
+
+# class LimitedModelMixin(models.Model):
+#     limit: int
+#
+#     def save(self, *args, **kwargs):
+#         if type(self).objects.count() >= type(self).limit:
+#             type(self).objects[0].delete()
+#
+#         super().save()
+#
+#     class Meta:
+#         abstract = True
 
 
 class Message(models.Model):
