@@ -7,7 +7,7 @@ from user.views import RegisterView
 from user.views import ShowUserView
 from user.views import FollowersView
 from user.views import FollowingView
-
+from user.views import UpdateUserView
 
 app_name = 'user'
 urlpatterns = [
@@ -18,4 +18,5 @@ urlpatterns = [
     path('show/<int:pk>', ShowUserView.as_view(), name='show_user'),
     path('followers/<int:pk>', FollowersView.as_view(), name='followers'),
     path('following/<int:pk>', FollowingView.as_view(), name='following'),
+    path('update/<int:pk>', UpdateUserView.as_view(), name='update')
 ]

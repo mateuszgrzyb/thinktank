@@ -19,9 +19,13 @@ and websockets.
 #### TODO:
 
 
-* finish one-to-one private chat
-* working action of going to a previous page
-
+* Code cleanup
+* UI
+    * Finish/clean up some pages
+    * Horizontal scaling is not working
+        * Most pages looks great on only half of screen
+        * I want it to look great on both half and fullscreen
+        * In case of problems fullscreen is the priority
 
 
 

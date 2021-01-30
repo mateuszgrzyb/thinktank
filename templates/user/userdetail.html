@@ -2,7 +2,10 @@
 {% load static %}
 {% block content %}
 
-  {% csrf_token %}
+
+  <form id='start_conversation_form' method="post" action="{% url 'chat:privchat_create' %}">
+    {% csrf_token %}
+  </form>
 
   <script id="follow_user_pk" type="application/json">{{ profile.pk }}</script>
   <script id="user_followers_url" type="application/json">{% url 'user:followers' pk=profile.pk %}</script>
@@ -34,6 +37,9 @@
       {% if user.is_authenticated and profile.pk != user.pk %}
         <button id="followers_button" class="btn btn-sm btn-primary">
           <span id="followers_label">{% if profile.is_followed %}FOLLOWING!{% else %}Follow{% endif %}</span>
+        </button>
+        <button form="start_conversation_form" class="btn btn-sm btn-primary" type="submit" name='pk' value="{{ profile.pk }}">
+          Send a message
         </button>
       {% endif %}
 

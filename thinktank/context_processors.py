@@ -30,9 +30,9 @@ def navbar(request: HttpRequest) -> dict:
     else:
         welcome = f'Hey, {u.username}!'
         links = {
-            'Create New Post': reverse('post:create_post'),
-            'Change Password': reverse('user:change_password'),
             'Logout': reverse('user:logout'),
+            'Create New Post': reverse('post:create_post'),
+            'Profile Settings': reverse('user:update', kwargs={'pk': u.pk}),
         }
 
         if u.is_superuser:

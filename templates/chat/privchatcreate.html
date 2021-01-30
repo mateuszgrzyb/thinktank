@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block content %}
+  {% for user in users %}
+    <form method="post">
+      {% csrf_token %}
+      <button type="submit" name='pk' value="{{ user.pk }}">{{ user.username }}</button>
+    </form>
+  {% endfor %}
+{% endblock %}

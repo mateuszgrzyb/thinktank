@@ -22,3 +22,4 @@ def back_url(request: HttpRequest) -> str:
     request.session[prever] = prev_url
 
     return prev_url
+    # return referer_url

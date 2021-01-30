@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from itertools import chain
 from itertools import zip_longest
 from random import randrange
 
@@ -7,13 +8,16 @@ from django.db.models import Q
 from django.http import Http404
 from django.http import HttpRequest
 from django.http import HttpResponse
+from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 
 from chat.models import rooms
+from user.models import PrivRoom
 from user.models import User
 from user.models import priv_rooms
+from user.models import users
 
 
 class GroupChatSelectionView(TemplateView):
@@ -25,8 +29,8 @@ class GroupChatSelectionView(TemplateView):
                 'chatroom': c,
                 'anonchatroom': ac
             } for c, ac in zip_longest(
-                rooms().filter(anonymous=True),
                 rooms().filter(anonymous=False),
+                rooms().filter(anonymous=True),
             )]
         }
 
@@ -42,7 +46,7 @@ class PrivChatSelectionView(LoginRequiredMixin, TemplateView):
 
 class BaseRoomView(TemplateView):
     template_name = 'chat/room.html'
-    room_type = ''
+    room_type: str
 
     @abstractmethod
     def get_room_name(self, url: str):
@@ -84,12 +88,11 @@ class AnonRoomView(BaseRoomView):
 
 
 class RoomView(LoginRequiredMixin, BaseRoomView):
+    room_type = ''
+
     def get_room_name(self, url: str):
         return f'{rooms().get(Q(url=url) & Q(anonymous=False)).name}'
 
-
-# class PrivChatView(LoginRequiredMixin, TemplateView):
-#     template_name = 'chat/privchat.html'
 
 class PrivChatView(LoginRequiredMixin, BaseRoomView):
     room_type = 'priv'
@@ -106,3 +109,23 @@ class PrivChatView(LoginRequiredMixin, BaseRoomView):
         }
 
 
+class PrivChatCreate(LoginRequiredMixin, TemplateView):
+    template_name = 'chat/privchatcreate.html'
+
+    def get_context_data(self, **kwargs):
+        user = self.request.user
+        return super().get_context_data(**kwargs) | {
+            'users': User.objects.exclude(
+                pk__in=chain.from_iterable(
+                    (p.user1.pk, p.user2.pk) for p in user.get_all_priv_rooms()
+                )
+            )
+        }
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        user: User = request.user
+        another_user: User = users().get(pk=(request.POST['pk']))
+        kwargs = {'user1': user, 'user2': another_user}
+        if (room := priv_rooms().filter(**kwargs).first()) is None:
+            room = priv_rooms().create(**kwargs)
+        return redirect('chat:privchat', room=room.url)

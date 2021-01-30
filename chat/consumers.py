@@ -1,10 +1,8 @@
 import json
+from collections import defaultdict
 
 from asgiref.sync import sync_to_async
 from channels.generic.websocket import AsyncWebsocketConsumer
-
-from chat.models import rooms
-
 
 # # noinspection PyAttributeOutsideInit
 # class AbstractChatConsumer(AsyncWebsocketConsumer):
@@ -112,6 +110,9 @@ class LoggedChatConsumer(AbstractChatConsumer):
             pass
 
 
+from chat.models import rooms
+
+
 class ChatConsumer(LoggedChatConsumer):
     history = {room.url: [] for room in rooms().filter(anonymous=False)}
 
@@ -127,10 +128,20 @@ class PrivChatConsumer(LoggedChatConsumer):
     def can_enter(self):
         user = self.scope['user']
         room = priv_rooms().filter(url=self.name).first()
-        if room is not None and room.can_be_entered_by(user):
-            return True
+        return room is not None and room.can_be_entered_by(user)
+
+    @sync_to_async
+    def check_url(self):
+        url = self.scope['url_route']['kwargs'][type(self).url_parameter]
+        if url not in type(self).history:
+            if not priv_rooms().filter(url=url).exists():
+                return False
+            else:
+                type(self).history[url] = []
+        return True
 
     async def connect(self):
-        await super().connect()
-        if not await self.can_enter():
-            await self.close()
+        if await self.check_url():
+            await super().connect()
+            if not await self.can_enter():
+                await self.close()

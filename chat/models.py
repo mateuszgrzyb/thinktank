@@ -1,8 +1,12 @@
+from typing import Type
+
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Room(models.Model):
-    anonymous = models.BooleanField(default=False)
+    anonymous = models.BooleanField()
     name = models.TextField(blank=False, null=False)
     url = models.TextField(blank=False, null=False)
 
@@ -16,19 +20,6 @@ class Room(models.Model):
 
     def __str__(self):
         return f'{self.name}'
-
-
-# class LimitedModelMixin(models.Model):
-#     limit: int
-#
-#     def save(self, *args, **kwargs):
-#         if type(self).objects.count() >= type(self).limit:
-#             type(self).objects[0].delete()
-#
-#         super().save()
-#
-#     class Meta:
-#         abstract = True
 
 
 class Message(models.Model):

@@ -1,13 +1,33 @@
 {% extends 'base.html' %}
 {% block content %}
-  {% for convo in convos %}
-    <a href="{% url 'chat:privchat' room=convo.url %}">
-      {% if not convo.user1 == user %}
-        user: {{ convo.user1 }}
-      {% else %}
-        user: {{ convo.user2 }}
-      {% endif %}
-    </a>
-  {% endfor %}
-  <a href="#">Start New Conversation</a>
+
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h4 class="w-100 text-center">Private Conversations</h4>
+      </div>
+    </div>
+
+    <div class="row p-1">
+      <div class="col">
+        <a class="btn btn-secondary w-100" href="{% url 'chat:privchat_create' %}">Start New Conversation</a>
+      </div>
+    </div>
+
+    {% for convo in convos %}
+      <div class="row p-1">
+        <div class="col">
+          <a class="btn btn-primary w-100 font-weight-bold" href="{% url 'chat:privchat' room=convo.url %}">
+            {% if not convo.user1 == user %}
+              @{{ convo.user1 }}
+            {% else %}
+              @{{ convo.user2 }}
+            {% endif %}
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+
+  </div>
+
 {% endblock %}

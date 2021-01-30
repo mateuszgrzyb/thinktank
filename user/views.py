@@ -15,6 +15,8 @@ from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import FormView
 from django.views.generic import ListView
+from django.views.generic import UpdateView
+
 from thinktank.mixins import BackUrlMixin
 
 from user.forms import RegistrationForm
@@ -42,11 +44,7 @@ class RegisterView(BackUrlMixin, FormView):
         return redirect('post:view_popular')
 
 
-class PasswordChangeView(
-    BackUrlMixin,
-    LoginRequiredMixin,
-    BasePasswordChangeView,
-):
+class PasswordChangeView(BackUrlMixin, LoginRequiredMixin, BasePasswordChangeView):
     template_name = 'user/change_password.html'
     # success_url = reverse_lazy('post:view_posts')
 
@@ -91,11 +89,6 @@ class FollowersView(UserListView):
     def get_queryset(self):
         return self.get_user().followers.all()
 
-    # def get_context_data(self, *, object_list=None, **kwargs):
-    #     context_data = super().get_context_data(object_list=object_list, **kwargs)
-    #     info = {'info': f'{self.get_user().username.capitalize()}\'s followers'}
-    #     return context_data | info
-
 
 class FollowingView(UserListView):
     info = ' is following'
@@ -103,7 +96,8 @@ class FollowingView(UserListView):
     def get_queryset(self):
         return self.get_user().following.all()
 
-    # def get_context_data(self, *, object_list=None, **kwargs):
-    #     context_data = super().get_context_data(object_list=object_list, **kwargs)
-    #     info = {'info': f'{self.get_user().username.capitalize()} is following'}
-    #     return context_data | info
+
+class UpdateUserView(LoginRequiredMixin, BackUrlMixin, UpdateView):
+    model = User
+    fields = ['username', 'bio']
+    template_name = 'user/updateuser.html'
