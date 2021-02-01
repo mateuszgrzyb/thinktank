@@ -15,10 +15,14 @@ Chat functionality was made with
 [Django Channels][channels] 
 and websockets.
 
+---
 
 #### TODO:
 
 
+* Finish profile settings
+    * Email verification
+    * Combining profile settings and password pages
 * Code cleanup
 * UI
     * Finish/clean up some pages
@@ -27,7 +31,10 @@ and websockets.
         * I want it to look great on both half and fullscreen
         * In case of problems fullscreen is the priority
 
+---
 
+<sub>by [Mateusz Grzyb][github]<sub>
 
 [django]: https://www.djangoproject.com/
 [channels]: https://channels.readthedocs.io/en/stable/
+[github]: https://www.github.com/mateuszgrzyb "Link to my github page"

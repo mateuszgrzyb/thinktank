@@ -9,9 +9,10 @@
           <h3 class="text-center">Register</h3>
         </div>
         <div class="form-group">
-          {{ form.errors }}
+          {{ form.non_field_errors }}
         </div>
         <div class="form-group">
+          {{ form.errors.username }}
           <input
             type="text"
             name="{{ form.username.name }}"
@@ -21,6 +22,7 @@
             autocomplete="off">
         </div>
         <div class="form-group">
+          {{ form.errors.email }}
           <input
             type="email"
             name="{{ form.email.name }}"
@@ -30,6 +32,7 @@
             autocomplete="off">
         </div>
         <div class="form-group">
+          {{ form.errors.password }}
           <input
             type="password"
             name="{{ form.password.name }}"
@@ -40,6 +43,7 @@
           >
         </div>
         <div class="form-group">
+          {{ form.errors.password2 }}
           <input
             type="password"
             name="{{ form.password2.name }}"

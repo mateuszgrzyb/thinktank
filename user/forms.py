@@ -1,6 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
+from user.models import User
 from user.models import users
 
 
@@ -13,8 +14,8 @@ class RegistrationForm(forms.Form):
     def clean(self):
         data = super().clean()
 
-        user_exist = users().filter(username=data['username']).exists()
-        equal_pass = data['password'] == data['password2']
+        user_exist = users().filter(username=data.get('username')).exists()
+        equal_pass = data.get('password') == data.get('password2')
         if not equal_pass:
             raise ValidationError("Passwords differ.")
         elif user_exist:
@@ -29,4 +30,13 @@ class RegistrationForm(forms.Form):
             ]
         })
 
+
+class UpdateUserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = [
+            'username',
+            'email',
+            'bio',
+        ]
 

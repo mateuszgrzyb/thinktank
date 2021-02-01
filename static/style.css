@@ -10,3 +10,8 @@
     background-color: #e2e2e2;
     border-radius: 10px;
 }
+
+.textarea {
+    resize: none;
+    /* border-width: 0; */
+}

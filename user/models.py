@@ -12,6 +12,9 @@ from django.dispatch import receiver
 
 
 class User(AbstractUser):
+    first_name = None
+    last_name = None
+
     bio = models.TextField(
         max_length=200,
         null=False,

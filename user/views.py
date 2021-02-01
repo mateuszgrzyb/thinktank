@@ -1,25 +1,29 @@
-from abc import abstractmethod
+import uuid
+from threading import Thread
 
 from django.contrib.auth import login
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.contrib.auth.views import PasswordChangeView as BasePasswordChangeView
+from django.core.mail import send_mail
+from django.forms import Form
 from django.http import Http404
 from django.http import HttpRequest
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from django.shortcuts import render
+from django.urls import reverse
 from django.views import View
 from django.views.generic import DetailView
 from django.views.generic import FormView
 from django.views.generic import ListView
+from django.views.generic import TemplateView
 from django.views.generic import UpdateView
 
 from thinktank.mixins import BackUrlMixin
-
 from user.forms import RegistrationForm
+from user.forms import UpdateUserForm
 from user.models import User
 from user.models import users
 
@@ -30,6 +34,11 @@ class LogoutView(BackUrlMixin, BaseLogoutView):
 
 class LoginView(BackUrlMixin, BaseLoginView):
     template_name = 'user/login.html'
+
+    def form_invalid(self, form):
+        print(form.errors)
+        print(form.non_field_errors())
+        return super().form_invalid(form)
 
 
 class RegisterView(BackUrlMixin, FormView):
@@ -45,7 +54,7 @@ class RegisterView(BackUrlMixin, FormView):
 
 
 class PasswordChangeView(BackUrlMixin, LoginRequiredMixin, BasePasswordChangeView):
-    template_name = 'user/change_password.html'
+    template_name = 'user/profile_settings/change_password.html'
     # success_url = reverse_lazy('post:view_posts')
 
 
@@ -97,7 +106,74 @@ class FollowingView(UserListView):
         return self.get_user().following.all()
 
 
-class UpdateUserView(LoginRequiredMixin, BackUrlMixin, UpdateView):
-    model = User
-    fields = ['username', 'bio']
-    template_name = 'user/updateuser.html'
+class UpdateUserView(LoginRequiredMixin, BackUrlMixin, TemplateView):
+    # model = User
+    # fields = ['username', 'email', 'bio']
+    template_name = 'user/profile_settings.html'
+
+    def get_context_data(self, **kwargs):
+        user = self.request.user
+        return super().get_context_data(**kwargs) | {
+            'uu_form': UpdateUserForm(instance=user),
+            'cp_form': PasswordChangeForm(user=user),
+        }
+
+    def post(self, request: HttpRequest, pk: int) -> HttpResponse:
+        user = request.user
+
+        if (data := request.POST)['form'] == 'uu':
+            form = UpdateUserForm(data=data)
+            if form.is_valid():
+                print('is valid')
+                print(form.has_changed())
+            else:
+                print(form.errors)
+
+        elif request.POST['form'] == 'cp':
+            form = PasswordChangeForm(user=user, data=data)
+            if form.is_valid():
+                print(form.save())
+            else:
+                print(form.errors)
+
+        # uu_form = UpdateUserForm(request.POST)
+        # cp_form = PasswordChangeForm(user=user, data=request.POST)
+        # print(f'uu_form: {uu_form.is_bound}')
+        # print(f'cp_form: {cp_form.is_bound}')
+        return HttpResponse('a')
+
+
+class EmailChangeView(LoginRequiredMixin, View):
+    conf_uuid: uuid
+    email: str
+
+    def get(self, request: HttpRequest, conf_uuid: uuid) -> HttpResponse:
+        if conf_uuid == type(self).conf_uuid:
+            u = request.user
+            u.email = type(self).email
+            u.save()
+            return HttpResponse('okay')
+
+    def post(self, request: HttpRequest) -> HttpResponse:
+        type(self).email = request.POST['email']
+        type(self).conf_uuid = uuid.uuid4()
+        url = request.build_absolute_uri(
+            reverse("user:confirm_email", kwargs={'conf_uuid': type(self).conf_uuid})
+        )
+        body = f'please change your email god dammit: {url}'
+
+        print('starting thread')
+
+        Thread(
+            target=send_mail,
+            kwargs={
+                'subject': 'ThinkTank: Change your email',
+                'message': body,
+                'from_email': None,
+                'recipient_list': [type(self).email],
+            },
+        ).start()
+
+        print('thread started')
+
+        return HttpResponse('okay')

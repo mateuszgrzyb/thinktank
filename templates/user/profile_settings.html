@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <div class="jumbotron myoutsidebox">
+    <div class="container p-5 w-75 mybox">
+      <h4>Profile Settings</h4>
+      {% include 'user/profile_settings/update_user.html' with form=uu_form name='form' value='uu'%}
+      <hr>
+      <h4>Change Email</h4>
+      {% include 'user/profile_settings/change_email.html' with form=uu_form %}
+      <hr />
+      <h4>Change Password</h4>
+      {% include 'user/profile_settings/change_password.html' with form=cp_form name='form' value='cp' %}
+    </div>
+  </div>
+
+
+  {% comment %}
+  <div class="jumbotron myoutsidebox">
+    <div class="container p-5 w-75 mybox">
+      {% include 'user/profile_settings/change_password.html' with form=cp_form %}
+    </div>
+  </div>
+  {% endcomment %}
+
+{% endblock %}

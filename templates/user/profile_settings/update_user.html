@@ -1,0 +1,39 @@
+<form method="post">
+  {% csrf_token %}
+
+  <div class="form-group">
+    <h6>Username</h6>
+  </div>
+
+  <div class="form-group">
+    {{ form.errors.username }}
+    <input
+      type="text"
+      class="form-control input-group-text"
+      name="{{ form.username.name }}"
+      value="{{ form.username.value }}">
+  </div>
+
+  <div class="form-group">
+    <h6>Bio</h6>
+  </div>
+
+  <div class="form-group">
+    {{ form.errors.bio }}
+    <textarea
+      class="form-control w-100 textarea"
+      {% comment %}
+      class="w-100 textarea"
+      {% endcomment %}
+      name="{{ form.bio.name }}"
+      rows="10"
+    >{{ form.bio.value }}</textarea>
+  </div>
+
+  <button
+    type="submit"
+    name="{{ name }}"
+    value="{{ value }}"
+    class="btn btn-secondary w-100"
+  >Update</button>
+</form>
