@@ -39,4 +39,3 @@ class UpdateUserForm(forms.ModelForm):
             'email',
             'bio',
         ]
-

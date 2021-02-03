@@ -8,6 +8,7 @@ from user.views import RegisterView
 from user.views import ShowUserView
 from user.views import FollowersView
 from user.views import FollowingView
+#from user.views import UpdateUserView
 from user.views import UpdateUserView
 
 app_name = 'user'
