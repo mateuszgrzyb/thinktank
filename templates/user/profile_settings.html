@@ -9,13 +9,13 @@
           - updated successfully!
         {% endif %}
       </h4>
-      {% include 'user/profile_settings/update_user.html' with form=uu_form name='uu' %}
+      {% include 'user/profile_settings/update_user.html' with form=uu_form name=name value=uu_value %}
       <hr>
       <h4>Change Email</h4>
       {% include 'user/profile_settings/change_email.html' with form=uu_form %}
       <hr />
       <h4>Change Password</h4>
-      {% include 'user/profile_settings/change_password.html' with form=cp_form name='cp' %}
+      {% include 'user/profile_settings/change_password.html' with form=cp_form name=name value=cp_value %}
     </div>
   </div>
 

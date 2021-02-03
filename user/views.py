@@ -1,9 +1,8 @@
 import uuid
-from collections import namedtuple
 from dataclasses import dataclass
 from threading import Thread
-from typing import Optional
 from typing import Type
+from typing import TypeVar
 
 from django.contrib.auth import login
 from django.contrib.auth.forms import PasswordChangeForm
@@ -12,8 +11,8 @@ from django.contrib.auth.views import LoginView as BaseLoginView
 from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.contrib.auth.views import PasswordChangeView as BasePasswordChangeView
 from django.core.mail import send_mail
-from django.forms import BaseForm
 from django.forms import Form
+from django.forms import ModelForm
 from django.http import Http404
 from django.http import HttpRequest
 from django.http import HttpResponse
@@ -25,11 +24,9 @@ from django.views.generic import DetailView
 from django.views.generic import FormView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
-from django.views.generic import UpdateView
 
 from thinktank.mixins import BackUrlMixin
 from user.forms import RegistrationForm
-from user.forms import UpdateUserForm
 from user.forms import UpdateUserForm
 from user.models import User
 from user.models import users
@@ -113,51 +110,57 @@ class FollowingView(UserListView):
         return self.get_user().following.all()
 
 
-# class UpdateUserView(LoginRequiredMixin, BackUrlMixin, TemplateView):
-#     # model = User
-#     # fields = ['username', 'email', 'bio']
-#     template_name = 'user/profile_settings.html'
-#
-#     def get_context_data(self, **kwargs):
-#         user = self.request.user
-#         return super().get_context_data(**kwargs) | {
-#             'uu_form': UpdateUserForm(instance=user),
-#             'cp_form': PasswordChangeForm(user=user),
-#         }
-#
-#     def post(self, *args):
+class UpdateUserView(LoginRequiredMixin, BackUrlMixin, TemplateView):
+    template_name = 'user/profile_settings.html'
 
-class UpdateUserView(LoginRequiredMixin, BackUrlMixin, View):
+    ac = {
+        'name': 'form',
+        'cp_value': 'cp',
+        'uu_value': 'uu'
+    }
 
-    def dispatch(self, request, *args, **kwargs) -> HttpResponse:
+    def get_context_data(self, **kwargs):
+        return super().get_context_data(**kwargs) | {
+            'uu_form': UpdateUserForm(instance=self.request.user),
+            'cp_form': PasswordChangeForm(user=self.request.user),
+        } | self.ac
 
-        success = False
-        user = request.user
-        uu_form = UpdateUserForm(instance=user)
-        cp_form = PasswordChangeForm(user=user)
+    T = TypeVar('T', Form, ModelForm)
 
-        if request.method == 'POST':
+    def validate_form(self, form_class: Type[T], **kwargs) -> T:
+        form = form_class(**kwargs)
+        if form.is_valid() and form.has_changed():
+            self.success = True
+            form.save()
 
-            if 'uu' in (data := request.POST):
-                uu_form = UpdateUserForm(data, instance=user)
-                if uu_form.is_valid():
-                    success = True
-                    uu_form.save()
+        return form
 
-            elif 'cp' in data:
-                cp_form = PasswordChangeForm(data=data, user=user)
-                if cp_form.is_valid():
-                    success = True
-                    cp_form.save()
+    @dataclass
+    class Switch:
+        uu_form: UpdateUserForm
+        cp_form: PasswordChangeForm
 
-            else:
-                raise Exception("BRUUUH")
+    def post(self, *args, **kwargs):
+        self.success = False
+        data = self.request.POST
+        user = self.request.user
 
-        return render(request, 'user/profile_settings.html', context={
-            'uu_form': uu_form,
-            'cp_form': cp_form,
-            'success': success
-        })
+        switch = {
+            self.ac['uu_value']: lambda: self.Switch(
+                self.validate_form(UpdateUserForm, data=data, instance=user),
+                PasswordChangeForm(user=user),
+            ),
+            self.ac['cp_value']: lambda: self.Switch(
+                UpdateUserForm(instance=user),
+                self.validate_form(PasswordChangeForm, data=data, user=user),
+            )
+        }
+
+        return render(
+            self.request,
+            self.template_name,
+            context={'success': self.success} | vars(switch[data[self.ac['name']]]()) | self.ac
+        )
 
 
 class EmailChangeView(LoginRequiredMixin, View):
