@@ -10,7 +10,7 @@ from markdown import markdown
 
 
 def get_readme(filename: str):
-    with open('./README.md') as f:
+    with open(filename) as f:
         return markdown(f.read())
 
 
@@ -32,5 +32,5 @@ class AjaxView(LoginRequiredMixin, View):
 
 
 class HomeView(TemplateView):
-    extra_context = {'readme': get_readme('./README.md')}
     template_name = 'home.html'
+    extra_context = {'readme': get_readme('./README.md')}

@@ -19,12 +19,11 @@ and websockets.
 
 #### TODO:
 
-
-* Finish profile settings
-    * Email verification
-    * Combining profile settings and password pages
 * Code cleanup
 * UI
+    * Add clear information about where user exactly is
+      in the system
+    * Breadcrumbs/other way of navigating back  
     * Finish/clean up some pages
     * Horizontal scaling is not working
         * Most pages looks great on only half of screen

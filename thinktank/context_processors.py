@@ -32,7 +32,7 @@ def navbar(request: HttpRequest) -> dict:
         links = {
             'Logout': reverse('user:logout'),
             'Create New Post': reverse('post:create_post'),
-            'Profile Settings': reverse('user:update', kwargs={'pk': u.pk}),
+            'Profile Settings': reverse('user:settings:update_user'),
         }
 
         if u.is_superuser:

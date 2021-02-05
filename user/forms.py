@@ -30,12 +30,3 @@ class RegistrationForm(forms.Form):
             ]
         })
 
-
-class UpdateUserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = [
-            'username',
-            'email',
-            'bio',
-        ]

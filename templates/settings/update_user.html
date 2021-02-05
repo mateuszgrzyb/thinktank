@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+
+  <div class="jumbotron myoutsidebox">
+    <div class="container p-5 w-75 mybox">
+      <h4>
+        Profile Settings
+        {% if success %}
+          - updated successfully!
+        {% endif %}
+      </h4>
+      {% include 'settings/profile_settings.html' with form=uu_form name=name value=uu_value %}
+      <hr>
+      <h4>Change Email</h4>
+      {% include 'settings/change_email.html' with form=uu_form %}
+      <hr />
+      <h4>Change Password</h4>
+      {% include 'settings/change_password.html' with form=cp_form name=name value=cp_value %}
+    </div>
+  </div>
+
+{% endblock %}
